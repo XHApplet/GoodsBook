@@ -5,26 +5,46 @@ import mydefines
 from mytool import pubdefines
 
 TABLE_NAME="tbl_goods"
+TABLE_KEY_INFO = [("Goods", "text")]
+TABLE_COL_INFO = [
+    ("BuyPrice", "integer"),
+    ("SellPrice", "integer"),
+    ("Num", "integer"),
+    ("Alert", "integer"),
+]
+TABLE_ALL_INFO = TABLE_KEY_INFO.extend
+
 TABLE_CREAT_SQL="""
 create table %s
 (
     Goods text PRIMARY KEY not null,
     BuyPrice integer not null,
     SellPrice integer not null,
-    Num integer not null
+    Num integer not null,
+    Alert integer not null
 )
 """ % TABLE_NAME
 
 
 class CGoodsManager(object):
-
+    m_TableName = "tbl_goods"
+    m_KeyInfo = [("Goods", "text")]
     ColInfo = [
-        ("Goods", "text"),
         ("BuyPrice", "integer"),
         ("SellPrice", "integer"),
         ("Num", "integer"),
+        ("Alert", "integer"),
     ]
-    KeyNum = 1
+    m_SQL = """
+create table %s
+(
+    Goods text PRIMARY KEY not null,
+    BuyPrice integer not null,
+    SellPrice integer not null,
+    Num integer not null,
+    Alert integer not null
+)
+""" % TABLE_NAME
 
     def __init__(self):
         self.GoodsInfo = {}
@@ -102,6 +122,18 @@ class CGoodsManager(object):
             self.GoodsInfo[sGoods] = tInfo
             logging.debug("load: %s %s" % (sGoods, tInfo))
         logging.info("    load finish %s" % len(result))
+
+
+
+class CGoods(obj):
+    def __init__(self, dData):
+        pass
+
+    def New(self, dData):
+        pass
+
+    def Load(self):
+        pass
 
 
 

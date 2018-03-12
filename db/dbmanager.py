@@ -62,6 +62,4 @@ class CDBManager(object):
         # coon.close()
         return result
 
-def InitDBManager():
-    obj = CDBManager()
-    pubdefines.set_manager("dbmgr", obj)
+

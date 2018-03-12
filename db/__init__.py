@@ -7,6 +7,10 @@
 @Desc:  
 """
 
+import pubdefines
+import dbmanager
+
 def InitDB():
-    pass
+    obj = dbmanager.CDBManager()
+    pubdefines.set_manager("dbmgr", obj)
 

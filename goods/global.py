@@ -38,7 +38,7 @@ class CGlobalManager(object):
 
     def __init__(self):
         self.GoodsInfo = {}
-        self.GoodsType = set({"公司", "非公司", "自制"})
+        self.GoodsType = set({"公司", "自制", "非公司"})
         self.Buyer = set()
         self.LoadFromDB()
         # self.LoadFromConfig()
