@@ -59,7 +59,7 @@ class CGlobalManager(object):
                 continue
             assert len(result) == 2
             _, sData = result
-            value = mydefines.get_value_by_data(sData, "blob")
+            value = mydefines.get_result_data(sData, "blob")
             setattr(self, sAttr, value)
 
 

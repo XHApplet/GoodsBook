@@ -17,22 +17,37 @@ def hex_marshal_value(sHex):
     value = marshal.loads(sData)
     return value
 
+
+def get_default_data(sType):
+    if sType in ("int", "real", "integer"):
+        return 0
+    if sType in ("text", "str"):
+        return ""
+    if sType in ("list",):
+        return []
+    if sType in ("dict",):
+        return {}
+    if sType in ("set",):
+        return set()
+    raise NotImplemented("未定义的类型:%s" % sType)
+
+
 def get_insert_value(xValue, sType):
     """通过sType类型获取对应的插入数据库的xValue的值"""
     if sType in ("int", "real", "integer"):
         return str(xValue)
     if sType in ("text", "datetime"):
         return "'%s'" % xValue
-    if sType in ("blob",):
+    if sType in ("blob", "list", "dict", "set",):
         sStr = value_marshal_hex(xValue) 
         return "'%s'" % sStr
     raise NotImplemented("未定义的类型:%s" % sType)
 
-def get_value_by_data(sData, sType):
+def get_result_data(sData, sType):
     """通过数据库的的值sData和对应的插入sType,获取真实值"""
     if sType in ("int", "real", "integer", "text", "datetime"):
         return sData
-    if sType in ("blob",):
+    if sType in ("blob", "list", "dict", "set",):
         return hex_marshal_value(sData)
     raise NotImplemented("未定义的类型:%s" % sType)
 
