@@ -117,7 +117,7 @@ class CMulBase(object):
     def GetWhereSQL(self):
         whereList = []
         for sKey in self.m_KeyList:
-            sType = self.m_ColType[sKey]:
+            sType = self.m_ColType[sKey]
             value = getattr(self, "m_" + sKey)
             sValue = misc.get_insert_value(value, sType)
             tmp = "%s=%s" % (sKey, sValue)
@@ -130,7 +130,7 @@ class CMulBase(object):
         """获取更新一条SQL的语句"""
         setList = []
         for sCol in colList:
-            sType = self.m_ColType[sCol]:
+            sType = self.m_ColType[sCol]
             value = getattr(self, "m_" + sCol)
             sValue = misc.get_insert_value(value, sType)
             tmp = "%s=%s" % (sCol, sValue)
@@ -209,10 +209,41 @@ class CMulBase(object):
 
 class COneBase(object):
     """单列对象基础类"""
-    pass
+    m_TableName = "tbl_global"
+    m_KeyName = "Name"
+    m_DataName = "Data"
+    m_DBKey = ""
 
 
+    def __init__(self):
+        self.m_Data = {}
+        self.Init()
 
+
+    def Init(self):
+        if self.Load():
+            return
+        self.New()
+
+
+    def Load(self):
+        sql = "select %s from %s where %s='%s'" % (self.m_DataName, self.m_TableName, self.m_KeyName, self.m_DBKey)
+        result = pubdefines.call_manager_func("dbmgr", "Query", sql, True)
+        if not result:
+            return False
+        self.m_Data = misc.get_result_data(result, "blob")
+
+
+    def New(self):
+        sData = misc.get_insert_value(self.m_Data, "blob")
+        sql = "insert into %s values('%s', %s)" % (self.m_TableName, self.m_DBKey, sData)
+        pubdefines.call_manager_func("dbmgr", "Excute", sql)
+
+
+    def Save(self):
+        sData = misc.get_insert_value(self.m_Data, "blob")
+        sql = "update %s set %s=%s where %s='%s'" % (self.m_TableName, self.m_DataName, sData, self.m_KeyName, self.m_DBKey)
+        pubdefines.call_manager_func("dbmgr", "Excute", sql)
 
 
 

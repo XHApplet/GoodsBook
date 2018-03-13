@@ -11,14 +11,14 @@ import sys
 
 from PyQt5 import QtWidgets
 from . import mainwidget
-from . import purchase
+from . import purchase, globalmgr
 
 g_Obj = None
 
 def InitGoods():
     globalmgr.InitGlobalManager()
-    buy.InitBuy()
-    sell.InitSell()
+    purchase.InitPurchase()
+    # sell.InitSell()
 
 def Show():
     app = QtWidgets.QApplication(sys.argv)

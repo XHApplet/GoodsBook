@@ -123,7 +123,7 @@ class CShipping(QtWidgets.QWidget, shipping_ui.Ui_Form):
 # -*- coding: utf-8 -*-
 
 import logging
-import mydefines
+from lib import misc
 
 from mytool import pubdefines
 
@@ -159,7 +159,7 @@ class CSellManager(object):
 
     def OutputGoods(self, tData):
         """出货保存数据库"""
-        sql = mydefines.get_insert_sql(TABLE_NAME, tData, self.ColInfo)
+        sql = misc.get_insert_sql(TABLE_NAME, tData, self.ColInfo)
         pubdefines.call_manager_func("dbmgr", "Excute", sql)
 
 

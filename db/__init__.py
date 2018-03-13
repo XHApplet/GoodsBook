@@ -7,8 +7,8 @@
 @Desc:  
 """
 
-import pubdefines
-import dbmanager
+from mytool import pubdefines
+from . import dbmanager
 
 def InitDB():
     obj = dbmanager.CDBManager()

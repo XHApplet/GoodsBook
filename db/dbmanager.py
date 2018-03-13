@@ -5,20 +5,9 @@ import os
 import sqlite3
 import logging
 
-import globalmgr
-import buy
-import sell
-import goods
-
+from . import table
 from mytool import pubdefines
 
-
-ALL_TABLES = [
-    globalmgr.TABLE_CREAT_SQL,
-    sell.TABLE_CREAT_SQL,
-    buy.TABLE_CREAT_SQL,
-    goods.TABLE_CREAT_SQL,
-]
 
 class CDBManager(object):
 
@@ -31,7 +20,7 @@ class CDBManager(object):
     def InitTable(self):
         if os.path.exists(self.DB_Name):
             return
-        for sql in ALL_TABLES:
+        for sql in table.ALL_TABLES:
             self.Excute(sql)
 
     def GetConn(self):

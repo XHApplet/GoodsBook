@@ -35,7 +35,7 @@ class CMyWindow(QtWidgets.QTabWidget, mainwidget_ui.Ui_MainWidget):
 
 
     def TestQueryInput(self):
-        pubdefines.call_manager_func("buymgr", "QueryAllInfo")
+        pubdefines.call_manager_func("purchasemgr", "QueryAllInfo")
 
 
     def TestQueryOutput(self):
@@ -152,7 +152,7 @@ class CMyWindow(QtWidgets.QTabWidget, mainwidget_ui.Ui_MainWidget):
         iEndTime = pubdefines.str_to_time(sEndTime)
         sGoods = self.comboBoxInputRecord.currentText()
 
-        dbuyInfo = pubdefines.call_manager_func("buymgr", "GetBuyInfoRecord", iBeginTime, iEndTime, sGoods)
+        dbuyInfo = pubdefines.call_manager_func("purchasemgr", "GetBuyInfoRecord", iBeginTime, iEndTime, sGoods)
         lstHead = ["日期", "类型", "商品", "进价", "数量", "备注"]
         self.tableWidgetInputRecord.setColumnCount(len(lstHead))
         self.tableWidgetInputRecord.setRowCount(len(dbuyInfo))

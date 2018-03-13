@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import mydefines
+from lib import misc
 from mytool import pubdefines
 
 TABLE_NAME="tbl_goods"
@@ -99,7 +99,7 @@ create table %s
 
     def NewGoodsInfo(self, sGoods):
         self.GoodsInfo[sGoods] = [0, 0, 0]
-        sql = mydefines.get_insert_sql(TABLE_NAME, [sGoods, *self.GoodsInfo[sGoods]], self.ColInfo)
+        sql = misc.get_insert_sql(TABLE_NAME, [sGoods, *self.GoodsInfo[sGoods]], self.ColInfo)
         pubdefines.call_manager_func("dbmgr", "Excute", sql)
 
 
@@ -107,7 +107,7 @@ create table %s
         lstSet = []
         for iIndex, value in enumerate(tInfo):
             sColName, sType = self.ColInfo[iIndex + self.KeyNum]
-            value = mydefines.get_insert_value(value, sType)
+            value = misc.get_insert_value(value, sType)
             lstSet.append("%s=%s" % (sColName, value))
         sSet = ",".join(lstSet)
         sql = "update %s set %s where Goods='%s'" % (TABLE_NAME, sSet, sGoods)

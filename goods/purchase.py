@@ -8,13 +8,17 @@
 """
 
 import sys
+import logging
 
+from mytool import pubdefines
 from PyQt5 import QtWidgets, QtCore, QtGui
 from ui import purchase_ui
+from . import base
 
-class CPurchase(QtWidgets.QWidget, purchase_ui.Ui_Form):
+
+class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
     def __init__(self, parent=None):
-        super(CPurchase, self).__init__(parent)
+        super(CPurchaseUI, self).__init__(parent)
         self.setupUi(self)
         self.InitControl()
         self.InitUI()
@@ -89,13 +93,13 @@ class CPurchase(QtWidgets.QWidget, purchase_ui.Ui_Form):
         # TODO 判断是否已经有了.增加商品、价格判断
         tInfo = [iTime, sGoodsType, sGoods, fPrice, iNum, sRemark]
         logging.info("InputGoods:%s" % (tInfo,))
-        self.Log("Input %s" % (tInfo,))
-        pubdefines.call_manager_func("buymgr", "InputGoods", tInfo)
-        pubdefines.call_manager_func("goodsmgr", "InputGoods", sGoods, fPrice, iNum)
+        pubdefines.write_to_file("xh/purchase", str(tInfo))
 
-        if not pubdefines.call_manager_func("globalmgr", "HasGoods", sGoods):
-            pubdefines.call_manager_func("globalmgr", "AddGoods", sGoodsType, sGoods)
-        self.Log("InputDone %s" % iTime)
+        pubdefines.call_manager_func("purchasemgr", "InputGoods", iTime, sGoodsType, sGoods, fPrice, iNum, sRemark)
+        # pubdefines.call_manager_func("goodsmgr", "InputGoods", sGoods, fPrice, iNum)
+
+        pubdefines.call_manager_func("globalmgr", "AddGoods", sGoodsType, sGoods)
+        pubdefines.write_to_file("xh/purchase", str(iTime))
         # self.slotInformation("进货成功")
         self.InitUI()
 
@@ -105,7 +109,7 @@ class CPurchase(QtWidgets.QWidget, purchase_ui.Ui_Form):
         sGoods = self.comboBoxInputGoods.text()
         if not sGoods:
             return
-        if not pubdefines.call_manager_func("goodsmgr", "HasGoods", sGoods):
+        if not pubdefines.call_manager_func("globalmgr", "HasGoods", sGoods):
             self.InputTiplabel.show()
             return
         self.InputTiplabel.hide()
@@ -116,48 +120,46 @@ class CPurchase(QtWidgets.QWidget, purchase_ui.Ui_Form):
             self.comboBoxInputType.setCurrentText(sType)
 
 
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
-import logging
-
-import mydefines
-
-from mytool import pubdefines
-
-TABLE_NAME="tbl_buy"
-TABLE_CREAT_SQL="""
-create table %s
-(
-    ID integer PRIMARY KEY autoincrement,
-    Time datetime not null,
-    Type text not null,
-    Goods text not null,
-    Price real not null,
-    Num integer not null,
-    Remark text
-)
-""" % TABLE_NAME
 
 
-class CBuyManager(object):
 
-    ColInfo = [
-        ("Time", "integer"),
-        ("Type", "text"),
-        ("Goods", "text"),
-        ("Price", "real"),
-        ("Num", "integer"),
-        ("Remark", "text"),
-    ]
+class CPurchase(base.CMulBase):
 
-    def __init__(self):
-        self.BuyInfo = {}
+    m_TableName = "tbl_purchase"
+    m_KeyList = ["ID"]
+    m_ColType = {
+        "ID":       "integer",
+        "Time":     "integer",
+        "Type":     "text",
+        "Goods":    "text",
+        "Price":    "real",
+        "Num":      "integer",
+        "Remark":   "text",
+    }
 
-    def InputGoods(self, tData):
+
+    def Init(self, *data):
+        iTime, sType, sGoods, fPrice, iNum, sRemark = data
+        self.m_Time = iTime
+        self.m_Type = sType
+        self.m_Goods = sGoods
+        self.m_Price = fPrice
+        self.m_Num = iNum
+        self.m_Remark = sRemark
+
+
+class CPurchaseManager(base.CBaseManager):
+
+    def NewObj(self, key):
+        obj = CPurchase(key)
+        return obj
+        
+
+    def InputGoods(self, *data):
         """进货保存数据库"""
-        sql = mydefines.get_insert_sql(TABLE_NAME, tData, self.ColInfo)
-        pubdefines.call_manager_func("dbmgr", "Excute", sql)
+        ID = pubdefines.call_manager_func("globalmgr", "NewPurchaseID")
+        self.NewItem(ID, *data)
+
 
     def QueryAllInfo(self):
         """查询所有的进货信息"""
@@ -191,7 +193,7 @@ class CBuyManager(object):
         return dBuyInfo
 
 
-def InitBuy():
-    oBugMgr = CBuyManager()
-    pubdefines.set_manager("buymgr", oBugMgr)
+def InitPurchase():
+    obj = CPurchaseManager()
+    pubdefines.set_manager("purchasemgr", obj)
 
