@@ -121,11 +121,11 @@ class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
 
 
 
-
+TABLE_NAME = "tbl_purchase"
 
 class CPurchase(base.CMulBase):
 
-    m_TableName = "tbl_purchase"
+    m_TableName = TABLE_NAME
     m_KeyList = ["ID"]
     m_ColType = {
         "ID":       "integer",

@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1070, 410)
+        Form.resize(1070, 427)
         self.verticalLayout = QtWidgets.QVBoxLayout(Form)
         self.verticalLayout.setObjectName("verticalLayout")
         self.tableWidgetStock = QtWidgets.QTableWidget(Form)
@@ -26,8 +26,8 @@ class Ui_Form(object):
         self.tableWidgetStock.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContentsOnFirstShow)
         self.tableWidgetStock.setEditTriggers(QtWidgets.QAbstractItemView.AnyKeyPressed|QtWidgets.QAbstractItemView.EditKeyPressed)
         self.tableWidgetStock.setGridStyle(QtCore.Qt.DashDotLine)
-        self.tableWidgetStock.setRowCount(10)
-        self.tableWidgetStock.setColumnCount(4)
+        self.tableWidgetStock.setRowCount(0)
+        self.tableWidgetStock.setColumnCount(0)
         self.tableWidgetStock.setObjectName("tableWidgetStock")
         self.tableWidgetStock.horizontalHeader().setCascadingSectionResizes(True)
         self.tableWidgetStock.horizontalHeader().setStretchLastSection(False)

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1126</width>
+    <height>453</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QWidget" name="widget_2" native="true">
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="5">
+       <widget class="QLabel" name="label_14">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>商品</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_17">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>开始日期</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5">
+       <widget class="ExtendedComboBox" name="comboBoxInputRecord">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="CCustomDateEdit" name="dateEditBeginInputRecord">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>123</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="CCustomDateEdit" name="dateEditEndInputRecord">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>123</width>
+          <height>123</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_18">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>结束日期</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="7">
+       <widget class="QLabel" name="labelNum">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color:rgb(0, 0, 255)</string>
+        </property>
+        <property name="text">
+         <string>总进货数量:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="6">
+       <widget class="QPushButton" name="pushButtonQueryInputRecord">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>查询</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="7">
+       <widget class="QLabel" name="labelAmount">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color:rgb(255, 0, 0)</string>
+        </property>
+        <property name="text">
+         <string>总进货金额:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tableWidgetInputRecord">
+     <property name="editTriggers">
+      <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed</set>
+     </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="rowCount">
+      <number>0</number>
+     </property>
+     <property name="columnCount">
+      <number>0</number>
+     </property>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CCustomDateEdit</class>
+   <extends>QDateEdit</extends>
+   <header location="global">lib.pubui</header>
+  </customwidget>
+  <customwidget>
+   <class>ExtendedComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">lib.pubui</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

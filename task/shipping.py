@@ -124,11 +124,11 @@ class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
         self.InitUI()
 
 
-
+TABLE_NAME = "tbl_shipping"
 
 class CShipping(base.CMulBase):
 
-    m_TableName = "tbl_shipping"
+    m_TableName = TABLE_NAME
     m_KeyList = ["ID"]
     m_ColType = {
         "ID":       "integer",
@@ -175,7 +175,7 @@ class CShippingManager(base.CBaseManager):
     def GetSellInfo(self, iBegin, iEnd):
         """查询iBegin-iEnd时间段的出货信息"""
         dSellInfo = {}
-        sql = "select * from tbl_shipping where Time>=%s and Time<=%s" % (iBegin, iEnd)
+        sql = "select * from %s where Time>=%s and Time<=%s" % (TABLE_NAME, iBegin, iEnd)
         result = pubdefines.call_manager_func("dbmgr", "Query", sql)
         for ID, *tData in result:
             logging.debug("sell info:%s %s" % (ID, tData))
@@ -183,19 +183,19 @@ class CShippingManager(base.CBaseManager):
         return dSellInfo
 
 
-    # def GetSellInfoRecord(self, iBegin, iEnd, sGoods, sBuyer):
-    #     dSellInfo = {}
-    #     sql = "select * from %s where Time>=%s and Time<=%s" % (TABLE_NAME, iBegin, iEnd)
-    #     if sGoods:
-    #         sql = sql + " and Goods like '%%%s%%'" % sGoods
-    #     if sBuyer:
-    #         sql = sql + " and Seller like '%%%s%%'" % sBuyer
-    #     sql += " ORDER BY Time"
-    #     result = pubdefines.call_manager_func("dbmgr", "Query", sql)
-    #     for ID, *tData in result:
-    #         logging.debug("sell record:%s %s" % (ID, tData))
-    #         dSellInfo[ID] = tData
-    #     return dSellInfo
+    def GetSellInfoRecord(self, iBegin, iEnd, sGoods, sBuyer):
+        dSellInfo = {}
+        sql = "select * from %s where Time>=%s and Time<=%s" % (TABLE_NAME, iBegin, iEnd)
+        if sGoods:
+            sql = sql + " and Goods like '%%%s%%'" % sGoods
+        if sBuyer:
+            sql = sql + " and Seller like '%%%s%%'" % sBuyer
+        sql += " ORDER BY Time"
+        result = pubdefines.call_manager_func("dbmgr", "Query", sql)
+        for ID, *tData in result:
+            logging.debug("sell record:%s %s" % (ID, tData))
+            dSellInfo[ID] = tData
+        return dSellInfo
 
 
 
