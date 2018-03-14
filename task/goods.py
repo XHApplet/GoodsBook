@@ -2,30 +2,68 @@
 
 import logging
 
+from PyQt5 import QtWidgets, QtCore, QtGui
 from lib import misc
 from mytool import pubdefines
+from ui import goodslib_ui
 from . import base
 
-TABLE_NAME="tbl_goods"
-TABLE_KEY_INFO = [("Goods", "text")]
-TABLE_COL_INFO = [
-    ("BuyPrice", "integer"),
-    ("SellPrice", "integer"),
-    ("Num", "integer"),
-    ("Alert", "integer"),
-]
-TABLE_ALL_INFO = TABLE_KEY_INFO.extend
 
-TABLE_CREAT_SQL="""
-create table %s
-(
-    Goods text PRIMARY KEY not null,
-    BuyPrice integer not null,
-    SellPrice integer not null,
-    Num integer not null,
-    Alert integer not null
-)
-""" % TABLE_NAME
+
+class CGoodsLib(QtWidgets.QWidget, goodslib_ui.Ui_Form):
+    def __init__(self, parent=None):
+        super(CGoodsLib, self).__init__(parent)
+        self.setupUi(self)
+        self.InitUI()
+        self.InitConnect()
+
+    def InitUI(self):
+        pass
+
+    def InitConnect(self):
+        pass
+
+
+    def ShowStock(self):
+        lstTitle = ["商品", "进价", "售价", "库存", "预警值"]
+        lstGoods = pubdefines.call_manager_func("globalmgr", "GetAllGoodsList")
+
+        self.tableWidgetStock.setColumnCount(len(lstTitle))
+        self.tableWidgetStock.setRowCount(len(lstGoods))
+        self.tableWidgetStock.setHorizontalHeaderLabels(lstTitle)
+        self.tableWidgetStock.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+
+        for iRow, sGoods in enumerate(lstGoods):
+            lstGoodsInfo = pubdefines.call_manager_func("goodsmgr", "GetGoodsInfo", sGoods)
+            for iCol, value in enumerate(lstGoodsInfo):
+                item = QtWidgets.QTableWidgetItem(str(value))
+                item.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.tableWidgetStock.setItem(iRow, iCol, item)
+
+
+    def ShowStock2(self):
+        lstTitle = ["商品", "进价", "售价", "库存", "预警值"]
+        self.tableWidgetStock.setHorizontalHeaderLabels(lstTitle)
+        dGoodsInfo = pubdefines.call_manager_func("goodsmgr", "GetGoodsInfo")
+        iGoodsNum = len(dGoodsInfo)
+        self.tableWidgetStock.setRowCount(iGoodsNum)
+
+        self.tableWidgetStock.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        # 设置每列自适应
+        # self.tableWidgetStock.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+
+        iIndex = 0
+        for sGoods, tInfo in dGoodsInfo.items():
+            item = QtWidgets.QTableWidgetItem(str(sGoods))
+            item.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidgetStock.setItem(iIndex, 0, item)
+            for y in range(len(tInfo) - 1):
+                # TODO 其他类型怎么判断,字符串价格排序有问题
+                xTmp = tInfo[y]
+                item = QtWidgets.QTableWidgetItem(str(xTmp))
+                item.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.tableWidgetStock.setItem(iIndex, y + 1, item)
+            iIndex += 1
 
 
 class CGoodsManager(base.CBaseManager):
@@ -69,8 +107,10 @@ class CGoodsManager(base.CBaseManager):
         self.CreateItem(sGoods, 0, fSellPrice, iNum, self.m_DefaultAlert)
         
 
-    # def GetGoodsInfo(self):
-    #     return self.GoodsInfo
+    def GetGoodsInfo(self, sGoods):
+        obj = self.GetItemBlock(sGoods)
+        if obj:
+            return obj.GetGoodsInfo()
 
 
     # def GetGoodsNum(self, sGoods):
@@ -172,6 +212,11 @@ class CGoods(base.CMulBase):
         self.m_SellPrice = fSellPrice
         self.m_Num -= iNum
         self.Save(*("SellPrice", "Num"))
+
+
+    def GetGoodsInfo(self):
+        return [self.m_Goods, self.m_BuyPrice, self.m_SellPrice, self.m_Num, self.m_Alert]
+
 
 def InitGoods():
     oGoodsMgr = CGoodsManager()

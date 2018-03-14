@@ -9,12 +9,13 @@
 
 import sys
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore, QtGui
 from ui import profile_ui
+from mytool import pubdefines
 
-class CProfile(QtWidgets.QWidget, profile_ui.Ui_Form):
+class CProfileUI(QtWidgets.QWidget, profile_ui.Ui_Form):
     def __init__(self, parent=None):
-        super(CProfile, self).__init__(parent)
+        super(CProfileUI, self).__init__(parent)
         self.setupUi(self)
         self.InitUI()
         self.InitConnect()
@@ -29,7 +30,6 @@ class CProfile(QtWidgets.QWidget, profile_ui.Ui_Form):
 
     def InitConnect(self):
         self.pushButtonQuery.clicked.connect(self.QueryProfile)
-
 
 
     def GetProfileByDate(self, sGoods, sTimeKey):
@@ -60,10 +60,10 @@ class CProfile(QtWidgets.QWidget, profile_ui.Ui_Form):
         dSellInfo = pubdefines.call_manager_func("shippingmgr", "GetSellInfo", iBeginTime, iEndTime)
         self.ProfileInfo = {}
         for _, tSellInfo in dSellInfo.items():
-            iTime = tSellInfo[0]
+            iTime, sGoods, _, fSellPrice, iNum, __ = tSellInfo
             sTime = pubdefines.time_to_str(iTime)
-            sGoods = tSellInfo[1]
-            fProfile = tSellInfo[6]
+            fBuyPrice = pubdefines.call_manager_func("goodsmgr", "GetGoodsBuyPrice", sGoods)
+            fProfile = (fSellPrice - fBuyPrice) * iNum
             
             sDayTime = sTime[:10]
             sMonthTime = sTime[:7]

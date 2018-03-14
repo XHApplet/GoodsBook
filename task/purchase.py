@@ -148,6 +148,7 @@ class CPurchase(base.CMulBase):
         self.m_Remark = sRemark
 
 
+
 class CPurchaseManager(base.CBaseManager):
 
     def NewObj(self, key):
