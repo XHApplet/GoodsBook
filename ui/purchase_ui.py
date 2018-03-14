@@ -124,6 +124,15 @@ class Ui_Form(object):
         self.InputTiplabel.setAlignment(QtCore.Qt.AlignCenter)
         self.InputTiplabel.setObjectName("InputTiplabel")
         self.gridLayout.addWidget(self.InputTiplabel, 0, 2, 1, 1)
+        self.labelAmount = QtWidgets.QLabel(Form)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.labelAmount.setFont(font)
+        self.labelAmount.setStyleSheet("color:rgb(0, 0, 255)")
+        self.labelAmount.setObjectName("labelAmount")
+        self.gridLayout.addWidget(self.labelAmount, 0, 4, 1, 1)
         self.gridLayout.setColumnMinimumWidth(0, 1)
         self.gridLayout.setColumnMinimumWidth(1, 2)
         self.gridLayout.setColumnMinimumWidth(2, 3)
@@ -161,5 +170,6 @@ class Ui_Form(object):
         self.label_13.setText(_translate("Form", "类别"))
         self.label_4.setText(_translate("Form", "数量"))
         self.InputTiplabel.setText(_translate("Form", "注意:新商品录入"))
+        self.labelAmount.setText(_translate("Form", "总价:"))
 
 from lib.pubui import CCustomDateEdit, ExtendedComboBox

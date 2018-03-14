@@ -27,7 +27,20 @@ class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
     def InitConnect(self):
         self.pushButtonOutput.clicked.connect(self.OutputGoods)
         self.comboBoxOutputGoods.MyFocusOutSignal.connect(self.FocusOutOutputGoods)
+        self.lineEditOutputNum.editingFinished.connect(self.TipAmount)
+        self.lineEditOutputPrice.editingFinished.connect(self.TipAmount)
 
+
+    def TipAmount(self):
+        sPrice = self.lineEditOutputPrice.text()
+        sNum = self.lineEditOutputNum.text()
+        if sPrice and sNum:
+            fPrice = float(sPrice)
+            iNum = int(sNum)
+            iAmount = fPrice * iNum
+            self.labelAmount.setText("总价:" + str(iAmount))
+            self.labelAmount.show()
+            
 
     def FocusOutOutputGoods(self):
         """卖出商品：当输入完商品之后自动填写价格"""
@@ -67,6 +80,7 @@ class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
         self.lineEditOutputNum.setText("")
         self.lineEditOutputPrice.setText("")
         self.lineEditOutputRemark.setText("")
+        self.labelAmount.hide()
 
 
     def ValidOutput(self):

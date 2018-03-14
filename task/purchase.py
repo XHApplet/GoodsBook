@@ -50,11 +50,25 @@ class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
         self.lineEditInputNum.setText("")
         self.lineEditInputPrice.setText("")
         self.lineEditInputRemark.setText("")
+        self.labelAmount.hide()
 
 
     def InitConnect(self):
         self.pushButtonInput.clicked.connect(self.OnPurchase)
         self.comboBoxInputGoods.MyFocusOutSignal.connect(self.FocusOutInputGoods)
+        self.lineEditInputNum.editingFinished.connect(self.TipAmount)
+        self.lineEditInputPrice.editingFinished.connect(self.TipAmount)
+
+
+    def TipAmount(self):
+        sPrice = self.lineEditInputPrice.text()
+        sNum = self.lineEditInputNum.text()
+        if sPrice and sNum:
+            fPrice = float(sPrice)
+            iNum = int(sNum)
+            iAmount = fPrice * iNum
+            self.labelAmount.setText("总价:" + str(iAmount))
+            self.labelAmount.show()
 
 
     def ValidInput(self):

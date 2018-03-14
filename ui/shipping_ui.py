@@ -97,6 +97,15 @@ class Ui_Form(object):
         self.lineEditOutputPrice.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEditOutputPrice.setObjectName("lineEditOutputPrice")
         self.gridLayout_2.addWidget(self.lineEditOutputPrice, 2, 3, 1, 1)
+        self.labelAmount = QtWidgets.QLabel(Form)
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        font.setBold(True)
+        font.setWeight(75)
+        self.labelAmount.setFont(font)
+        self.labelAmount.setStyleSheet("color:rgb(0, 0, 255)")
+        self.labelAmount.setObjectName("labelAmount")
+        self.gridLayout_2.addWidget(self.labelAmount, 0, 4, 1, 1)
         self.gridLayout_2.setColumnStretch(0, 1)
         self.gridLayout_2.setColumnStretch(1, 4)
         self.gridLayout_2.setColumnStretch(2, 4)
@@ -122,5 +131,6 @@ class Ui_Form(object):
         self.pushButtonOutput.setText(_translate("Form", "确认出货"))
         self.label_9.setText(_translate("Form", "数量"))
         self.label_10.setText(_translate("Form", "价格"))
+        self.labelAmount.setText(_translate("Form", "总价:"))
 
 from lib.pubui import CCustomDateEdit, ExtendedComboBox

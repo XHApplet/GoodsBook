@@ -24,7 +24,7 @@ class Ui_Form(object):
         self.tableWidgetStock.setMidLineWidth(0)
         self.tableWidgetStock.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.tableWidgetStock.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContentsOnFirstShow)
-        self.tableWidgetStock.setEditTriggers(QtWidgets.QAbstractItemView.AnyKeyPressed|QtWidgets.QAbstractItemView.EditKeyPressed)
+        self.tableWidgetStock.setEditTriggers(QtWidgets.QAbstractItemView.AnyKeyPressed|QtWidgets.QAbstractItemView.DoubleClicked|QtWidgets.QAbstractItemView.EditKeyPressed)
         self.tableWidgetStock.setGridStyle(QtCore.Qt.DashDotLine)
         self.tableWidgetStock.setRowCount(0)
         self.tableWidgetStock.setColumnCount(0)

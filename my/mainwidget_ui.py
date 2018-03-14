@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWidget(object):
     def setupUi(self, MainWidget):
         MainWidget.setObjectName("MainWidget")
-        MainWidget.resize(1085, 532)
+        MainWidget.resize(1027, 474)
         font = QtGui.QFont()
         font.setPointSize(15)
         MainWidget.setFont(font)
@@ -504,7 +504,7 @@ class Ui_MainWidget(object):
         MainWidget.addTab(self.InfoWidget, "")
 
         self.retranslateUi(MainWidget)
-        MainWidget.setCurrentIndex(0)
+        MainWidget.setCurrentIndex(5)
         QtCore.QMetaObject.connectSlotsByName(MainWidget)
         MainWidget.setTabOrder(self.comboBoxOutputGoods, self.comboBoxOutputBuyer)
         MainWidget.setTabOrder(self.comboBoxOutputBuyer, self.lineEditOutputPrice)

@@ -21,7 +21,7 @@ class CGoodsLib(QtWidgets.QWidget, goodslib_ui.Ui_Form):
         pass
 
     def InitConnect(self):
-        pass
+        self.tableWidgetStock.cellChanged.connect(self.CellChanged)
 
 
     def ShowStock(self):
@@ -38,32 +38,30 @@ class CGoodsLib(QtWidgets.QWidget, goodslib_ui.Ui_Form):
             for iCol, value in enumerate(lstGoodsInfo):
                 item = QtWidgets.QTableWidgetItem(str(value))
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
+                if iCol == 0:
+                    item.setFlags(QtCore.Qt.ItemIsEditable)
                 self.tableWidgetStock.setItem(iRow, iCol, item)
 
 
-    def ShowStock2(self):
-        lstTitle = ["商品", "进价", "售价", "库存", "预警值"]
-        self.tableWidgetStock.setHorizontalHeaderLabels(lstTitle)
-        dGoodsInfo = pubdefines.call_manager_func("goodsmgr", "GetGoodsInfo")
-        iGoodsNum = len(dGoodsInfo)
-        self.tableWidgetStock.setRowCount(iGoodsNum)
+    def CellChanged(self, iRow, iCol):
+        if iCol == 0:
+            return
+        itemGoods = self.tableWidgetStock.item(iRow, 0)
+        sGoods = itemGoods.text()
+        item = self.tableWidgetStock.item(iRow, iCol)
+        if iCol == 1:
+            fBuyPrice = float(item.text())
+            pubdefines.call_manager_func("goodsmgr", "Excute", "SetBuyPrice", sGoods, fBuyPrice)
+        elif iCol == 2:
+            fSellPrice = float(item.text())
+            pubdefines.call_manager_func("goodsmgr", "Excute", "SetSellPrice", sGoods, fSellPrice)
+        elif iCol == 3:
+            iStock = int(item.text())
+            pubdefines.call_manager_func("goodsmgr", "Excute", "SetGoodsNum", sGoods, iStock)
+        elif iCol == 4:
+            iAlert = int(item.text())
+            pubdefines.call_manager_func("goodsmgr", "Excute", "SetGoodsAlert", sGoods, iAlert)
 
-        self.tableWidgetStock.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
-        # 设置每列自适应
-        # self.tableWidgetStock.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-
-        iIndex = 0
-        for sGoods, tInfo in dGoodsInfo.items():
-            item = QtWidgets.QTableWidgetItem(str(sGoods))
-            item.setTextAlignment(QtCore.Qt.AlignCenter)
-            self.tableWidgetStock.setItem(iIndex, 0, item)
-            for y in range(len(tInfo) - 1):
-                # TODO 其他类型怎么判断,字符串价格排序有问题
-                xTmp = tInfo[y]
-                item = QtWidgets.QTableWidgetItem(str(xTmp))
-                item.setTextAlignment(QtCore.Qt.AlignCenter)
-                self.tableWidgetStock.setItem(iIndex, y + 1, item)
-            iIndex += 1
 
 
 class CGoodsManager(base.CBaseManager):
@@ -73,6 +71,17 @@ class CGoodsManager(base.CBaseManager):
     def NewObj(self, key):
         obj = CGoods(key)
         return obj
+
+
+    def Excute(self, sFunc, sGoods, *args):
+        obj = self.GetItemBlock(sGoods)
+        if not obj:
+            return
+        func = getattr(obj, sFunc, None)
+        if not func:
+            raise Exception("not func %s" % sFunc)
+            return
+        return func(*args)
 
 
     def GetGoodsBuyPrice(self, sGoods):
@@ -211,11 +220,39 @@ class CGoods(base.CMulBase):
     def Shipping(self, fSellPrice, iNum):
         self.m_SellPrice = fSellPrice
         self.m_Num -= iNum
-        self.Save(*("SellPrice", "Num"))
+        self.Save(*["SellPrice", "Num"])
 
 
     def GetGoodsInfo(self):
         return [self.m_Goods, self.m_BuyPrice, self.m_SellPrice, self.m_Num, self.m_Alert]
+
+
+    def SetGoodsAlert(self, iAlert):
+        if self.m_Alert == iAlert:
+            return
+        self.m_Alert = iAlert
+        self.Save(*["Alert"])
+
+
+    def SetGoodsNum(self, iNum):
+        if self.m_Num == iNum:
+            return
+        self.m_Num = iNum
+        self.Save(*["Num"])
+
+
+    def SetBuyPrice(self, fBuyPrice):
+        if abs(fBuyPrice - self.m_BuyPrice) < 1e-4:
+            return
+        self.m_BuyPrice = fBuyPrice
+        self.Save(*["BuyPrice"])
+
+
+    def SetSellPrice(self, fSellPrice):
+        if abs(fSellPrice - self.m_SellPrice) < 1e-4:
+            return
+        self.m_SellPrice = fSellPrice
+        self.Save(*["SellPrice"])
 
 
 def InitGoods():
