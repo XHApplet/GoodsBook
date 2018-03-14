@@ -96,7 +96,7 @@ class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
         pubdefines.write_to_file("xh/purchase", str(tInfo))
 
         pubdefines.call_manager_func("purchasemgr", "InputGoods", iTime, sGoodsType, sGoods, fPrice, iNum, sRemark)
-        # pubdefines.call_manager_func("goodsmgr", "InputGoods", sGoods, fPrice, iNum)
+        pubdefines.call_manager_func("goodsmgr", "InputGoods", sGoods, fPrice, iNum)
 
         pubdefines.call_manager_func("globalmgr", "AddGoods", sGoodsType, sGoods)
         pubdefines.write_to_file("xh/purchase", str(iTime))

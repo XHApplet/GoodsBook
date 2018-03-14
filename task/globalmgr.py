@@ -30,10 +30,14 @@ class CGlobalManager(base.COneBase):
         "\n" :"",
     }
 
+    m_GoodInfoFlag = "goodsinfo"
+
+
     def __init__(self):
         super(CGlobalManager, self).__init__()
         self.m_GoodsType = ["公司", "自制", "非公司"]
-        self.m_GoodsList = []
+        if not self.m_GoodInfoFlag in self.m_Data:
+            self.m_Data[self.m_GoodInfoFlag] = {}
 
 
     def NewIDByFlag(self, sFlag):
@@ -55,31 +59,28 @@ class CGlobalManager(base.COneBase):
 
 
     def GetAllGoodsList(self):
-        if self.m_GoodsList:
-            return self.m_GoodsList
-        sFlag = "goodsinfo"
-        dInfo = self.m_Data.get(sFlag, {})
-        for _, lstGoods in dInfo.items():
-            self.m_GoodsList.extend(lstGoods)
-        return self.m_GoodsList
+        dGoodsInfo = self.m_Data[self.m_GoodInfoFlag]
+        return [ sGoods for sGoods in dGoodsInfo.keys() ]
 
 
     def HasGoods(self, sGoods):
-        if sGoods in self.m_GoodsList:
+        dGoodsInfo = self.m_Data[self.m_GoodInfoFlag]
+        if sGoods in dGoodsInfo:
             return True
         return False
 
 
     def AddGoods(self, sGoodsType, sGoods):
-        if sGoods in self.m_GoodsList:
+        dGoodsInfo = self.m_Data[self.m_GoodInfoFlag]
+        if sGoods in dGoodsInfo:
             return
-        sFlag = "goodsinfo"
-        if not sFlag in self.m_Data:
-            self.m_Data[sFlag] = {}
-        if not sGoodsType in self.m_Data[sFlag]:
-            self.m_Data[sFlag][sGoodsType] = []
-        self.m_Data[sFlag][sGoodsType].append(sGoods)
+        dGoodsInfo[sGoods] = sGoodsType
         self.Save()
+
+
+    def GetGoodsType(self, sGoods):
+        dGoodsInfo = self.m_Data[self.m_GoodInfoFlag]
+        return dGoodsInfo.get(sGoods, "")
 
 
     # def __init__(self):

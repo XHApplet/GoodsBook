@@ -11,12 +11,13 @@ import sys
 
 from PyQt5 import QtWidgets
 from . import mainwidget
-from . import purchase, globalmgr
+from . import purchase, globalmgr, goods
 
 g_Obj = None
 
-def InitGoods():
+def InitTask():
     globalmgr.InitGlobalManager()
+    goods.InitGoods()
     purchase.InitPurchase()
     # sell.InitSell()
 

@@ -40,6 +40,7 @@ class CBaseManager(object):
         bRet = obj.Load()
         if not bRet:
             return None
+        self.m_ItemDict[key] = obj
         return obj
 
 
@@ -164,7 +165,7 @@ class CMulBase(object):
     def Create(self, *args, **kwargs):
         """智能创建一个对象，如果数据库中存在则直接退出"""
         self.Init(*args, **kwargs)
-        bRet = self.Load4DB()
+        bRet = self.Load()
         if bRet:
             return
         self.New2DB()
@@ -175,7 +176,7 @@ class CMulBase(object):
         pubdefines.call_manager_func("dbmgr", "Excute", sql)
 
 
-    def Load4DB(self):
+    def Load(self):
         sql = self.GetQuerySQL()
         result = pubdefines.call_manager_func("dbmgr", "Query", sql, True)
         if not result:
@@ -231,7 +232,7 @@ class COneBase(object):
         result = pubdefines.call_manager_func("dbmgr", "Query", sql, True)
         if not result:
             return False
-        self.m_Data = misc.get_result_data(result, "blob")
+        self.m_Data = misc.get_result_data(result[0], "blob")
 
 
     def New(self):

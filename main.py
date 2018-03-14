@@ -3,7 +3,7 @@
 import os
 import sys
 import logging
-import goods, db
+import task, db
 
 from mytool import pubdefines
 
@@ -26,14 +26,14 @@ def InitConfig():
 
 def InitManager():
     db.InitDB()
-    goods.InitGoods()
+    task.InitTask()
     logging.info("init manager...")
 
 
 def Start():
     InitConfig()
     InitManager()
-    goods.Show()
+    task.Show()
 
 if __name__ == "__main__":
     Start()
