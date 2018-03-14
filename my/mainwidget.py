@@ -39,7 +39,7 @@ class CMyWindow(QtWidgets.QTabWidget, mainwidget_ui.Ui_MainWidget):
 
 
     def TestQueryOutput(self):
-        pubdefines.call_manager_func("sellmgr", "QueryAllInfo")
+        pubdefines.call_manager_func("shippingmgr", "QueryAllInfo")
 
 
     def InitConnect(self):
@@ -180,7 +180,7 @@ class CMyWindow(QtWidgets.QTabWidget, mainwidget_ui.Ui_MainWidget):
         sGoods = self.comboBoxOutputRecordGoods.currentText()
         sBuyer = self.comboBoxOutputRecordBuyer.currentText()
 
-        dSellInfo = pubdefines.call_manager_func("sellmgr", "GetSellInfoRecord", iBeginTime, iEndTime, sGoods, sBuyer)
+        dSellInfo = pubdefines.call_manager_func("shippingmgr", "GetSellInfoRecord", iBeginTime, iEndTime, sGoods, sBuyer)
         lstHead = ["日期", "商品", "卖家", "售价", "数量", "备注", "利润"]
         self.tableWidgetOutputRecord.setColumnCount(len(lstHead))
         self.tableWidgetOutputRecord.setRowCount(len(dSellInfo))

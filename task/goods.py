@@ -44,6 +44,13 @@ class CGoodsManager(base.CBaseManager):
         return 0
 
 
+    def GetGoodsSellPrice(self, sGoods):
+        obj = self.GetItemBlock(sGoods)
+        if obj:
+            return obj.GetSellPrice()
+        return 0
+
+
     def InputGoods(self, sGoods, fBuyPrice, iNum):
         """进货"""
         obj = self.GetItemBlock(sGoods)
@@ -51,6 +58,15 @@ class CGoodsManager(base.CBaseManager):
             obj.Purchase(fBuyPrice, iNum)
             return
         self.CreateItem(sGoods, fBuyPrice, 0, iNum, self.m_DefaultAlert)
+        
+
+    def OutputGoods(self, sGoods, fSellPrice, iNum):
+        """出货"""
+        obj = self.GetItemBlock(sGoods)
+        if obj:
+            obj.Shipping(fSellPrice, iNum)
+            return
+        self.CreateItem(sGoods, 0, fSellPrice, iNum, self.m_DefaultAlert)
         
 
     # def GetGoodsInfo(self):
@@ -144,13 +160,18 @@ class CGoods(base.CMulBase):
     def GetBuyPrice(self):
         return self.m_BuyPrice
 
+    def GetSellPrice(self):
+        return self.m_SellPrice
 
     def Purchase(self, fBuyPrice, iNum):
         self.m_BuyPrice = fBuyPrice
         self.m_Num += iNum
         self.Save(*("BuyPrice", "Num"))
 
-
+    def Shipping(self, fSellPrice, iNum):
+        self.m_SellPrice = fSellPrice
+        self.m_Num -= iNum
+        self.Save(*("SellPrice", "Num"))
 
 def InitGoods():
     oGoodsMgr = CGoodsManager()

@@ -18,12 +18,12 @@ class CMainWidget(QtWidgets.QMainWindow, mainwidget_ui.Ui_MainWindow):
 
     def InitUI(self):
         self.m_Purchase = purchase.CPurchaseUI(self)
-        # self.m_Shipping = shipping.CShipping(self)
+        self.m_Shipping = shipping.CShippingUI(self)
         # self.m_Profile = profile.CProfile(self)
         # self.m_GoodsLib = goodslib.CGoodsLib(self)
         
         self.tabWidget.addTab(self.m_Purchase, "进货")
-        # self.tabWidget.addTab(self.m_Shipping, "出货")
+        self.tabWidget.addTab(self.m_Shipping, "出货")
         # self.tabWidget.addTab(self.m_Profile, "总利润")
         # self.tabWidget.addTab(self.m_GoodsLib, "商品库")
 

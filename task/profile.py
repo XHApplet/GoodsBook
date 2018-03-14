@@ -57,7 +57,7 @@ class CProfile(QtWidgets.QWidget, profile_ui.Ui_Form):
         sEndTime = oEndDate.toString("yyyy-MM-dd 23:59:59")
         iEndTime = pubdefines.str_to_time(sEndTime)
         self.MaxProfileCol = 0
-        dSellInfo = pubdefines.call_manager_func("sellmgr", "GetSellInfo", iBeginTime, iEndTime)
+        dSellInfo = pubdefines.call_manager_func("shippingmgr", "GetSellInfo", iBeginTime, iEndTime)
         self.ProfileInfo = {}
         for _, tSellInfo in dSellInfo.items():
             iTime = tSellInfo[0]

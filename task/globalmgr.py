@@ -31,6 +31,7 @@ class CGlobalManager(base.COneBase):
     }
 
     m_GoodInfoFlag = "goodsinfo"
+    m_BuyerFlag = "buyer"
 
 
     def __init__(self):
@@ -38,6 +39,8 @@ class CGlobalManager(base.COneBase):
         self.m_GoodsType = ["公司", "自制", "非公司"]
         if not self.m_GoodInfoFlag in self.m_Data:
             self.m_Data[self.m_GoodInfoFlag] = {}
+        if not self.m_BuyerFlag in self.m_Data:
+            self.m_Data[self.m_BuyerFlag] = []
 
 
     def NewIDByFlag(self, sFlag):
@@ -53,6 +56,10 @@ class CGlobalManager(base.COneBase):
         xid = self.NewIDByFlag(sFlag)
         return xid
 
+    def NewShippingID(self):
+        sFlag = "shippingid"
+        xid = self.NewIDByFlag(sFlag)
+        return xid
 
     def GetAllType(self):
         return self.m_GoodsType
@@ -81,6 +88,17 @@ class CGlobalManager(base.COneBase):
     def GetGoodsType(self, sGoods):
         dGoodsInfo = self.m_Data[self.m_GoodInfoFlag]
         return dGoodsInfo.get(sGoods, "")
+
+
+    def AddBuyer(self, sBuyer):
+        if sBuyer in self.m_Data[self.m_BuyerFlag]:
+            return
+        self.m_Data[self.m_BuyerFlag].append(sBuyer)
+        self.Save()
+
+
+    def GetAllBuyer(self):
+        return self.m_Data[self.m_BuyerFlag]
 
 
     # def __init__(self):

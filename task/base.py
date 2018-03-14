@@ -248,80 +248,80 @@ class COneBase(object):
 
 
 
-class CBaseManager2(object):
-    m_TableName = ""
-    m_KeyInfo = []
-    m_ColType = []
-    m_SQL = ""
+# class CBaseManager2(object):
+#     m_TableName = ""
+#     m_KeyInfo = []
+#     m_ColType = []
+#     m_SQL = ""
     
-    def __init__(self, *args, **kwargs):
-        self.m_AllInfo = copy.deepcopy(self.m_KeyInfo)
-        self.m_AllInfo.extend(self.m_ColType)
-        self.m_KeyLst = [ sKey for sKey, _ in self.m_KeyInfo ]
-        self.m_ColLst = [ sKey for sKey, _ in self.m_ColType ]
-        self.m_ItemInfo = {}
+#     def __init__(self, *args, **kwargs):
+#         self.m_AllInfo = copy.deepcopy(self.m_KeyInfo)
+#         self.m_AllInfo.extend(self.m_ColType)
+#         self.m_KeyLst = [ sKey for sKey, _ in self.m_KeyInfo ]
+#         self.m_ColLst = [ sKey for sKey, _ in self.m_ColType ]
+#         self.m_ItemInfo = {}
 
 
-    def InitSQL(self):
-        self.m_SQL += "create table %s\r\n" % self.m_TableName
-        self.m_SQL += "(\r\n"
-        for sKey, sType in self.m_KeyInfo:
-            self.m_SQL += "\t%s %s PRIMARY KEY not null,\r\n" % (sKey, sType)
-        for sKey, sType in self.m_ColType:
-            self.m_SQL += "\t%s %s not null,\r\n" % (sKey, sType)
-        self.m_SQL = self.m_SQL[:-3]
-        self.m_SQL += "\r\n)\r\n"
+#     def InitSQL(self):
+#         self.m_SQL += "create table %s\r\n" % self.m_TableName
+#         self.m_SQL += "(\r\n"
+#         for sKey, sType in self.m_KeyInfo:
+#             self.m_SQL += "\t%s %s PRIMARY KEY not null,\r\n" % (sKey, sType)
+#         for sKey, sType in self.m_ColType:
+#             self.m_SQL += "\t%s %s not null,\r\n" % (sKey, sType)
+#         self.m_SQL = self.m_SQL[:-3]
+#         self.m_SQL += "\r\n)\r\n"
 
 
-    def Load(self):
-        sql = "select * from %s" % self.m_TableName
-        result = pubdefines.call_manager_func("dbmgr", "Query", sql)
-        for lstAllInfo in result:
-            lstKey = lstAllInfo[:len(self.m_KeyInfo)]
-            lstValue = lstAllInfo[len(self.m_KeyInfo):]
-            sKey = self._GetKey(lstKey)
-            self.m_ItemInfo[sKey] = CBase(lstValue, self.m_ColType)
+#     def Load(self):
+#         sql = "select * from %s" % self.m_TableName
+#         result = pubdefines.call_manager_func("dbmgr", "Query", sql)
+#         for lstAllInfo in result:
+#             lstKey = lstAllInfo[:len(self.m_KeyInfo)]
+#             lstValue = lstAllInfo[len(self.m_KeyInfo):]
+#             sKey = self._GetKey(lstKey)
+#             self.m_ItemInfo[sKey] = CBase(lstValue, self.m_ColType)
 
 
-    def _GetInsertSQL(self, lstAllInfo):
-        sKeys = ",".join(self.m_KeyLst)
-        lstValue = []
-        for iIndex, value in enumerate(lstAllInfo):
-            sType = self.m_AllInfo[iIndex][1]
-            sValue = misc.get_insert_value(value, sType)
-            lstValue.append(sValue)
-        sValues = ",".join(lstValue)
-        sql = "insert into %s(%s) values(%s)" % (self.m_TableName, sKeys, sValues)
-        return sql
+#     def _GetInsertSQL(self, lstAllInfo):
+#         sKeys = ",".join(self.m_KeyLst)
+#         lstValue = []
+#         for iIndex, value in enumerate(lstAllInfo):
+#             sType = self.m_AllInfo[iIndex][1]
+#             sValue = misc.get_insert_value(value, sType)
+#             lstValue.append(sValue)
+#         sValues = ",".join(lstValue)
+#         sql = "insert into %s(%s) values(%s)" % (self.m_TableName, sKeys, sValues)
+#         return sql
 
 
-    def Save(self, lstAllInfo):
-        sql = self._GetInsertSQL(lstAllInfo)
-        pubdefines.call_manager_func("dbmgr", "Excute", sql)
+#     def Save(self, lstAllInfo):
+#         sql = self._GetInsertSQL(lstAllInfo)
+#         pubdefines.call_manager_func("dbmgr", "Excute", sql)
 
 
-    def Update(self, lstAllInfo):
-        pass
+#     def Update(self, lstAllInfo):
+#         pass
 
 
-    def _GetKey(self, lstKey):
-        if len(lstKey) == 1:
-            return lstKey[0]
-        return tuple(lstKey)
+#     def _GetKey(self, lstKey):
+#         if len(lstKey) == 1:
+#             return lstKey[0]
+#         return tuple(lstKey)
 
 
 
-class CBase2(object):
+# class CBase2(object):
 
-    m_ManagerName = ""
+#     m_ManagerName = ""
 
-    def __init__(self, lstValue, colInfo):
-        for iIndex, value in enumerate(lstValue):
-            sCol, sType = colInfo[iIndex]
-            xValue = misc.get_result_data(value, sType)
-            setattr(self, sCol, xValue)
+#     def __init__(self, lstValue, colInfo):
+#         for iIndex, value in enumerate(lstValue):
+#             sCol, sType = colInfo[iIndex]
+#             xValue = misc.get_result_data(value, sType)
+#             setattr(self, sCol, xValue)
 
 
-    def Save(self):
-        pass
+#     def Save(self):
+#         pass
 

@@ -8,13 +8,17 @@
 """
 
 import sys
+import logging
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore, QtGui
 from ui import shipping_ui
+from lib import misc
+from mytool import pubdefines
+from . import base
 
-class CShipping(QtWidgets.QWidget, shipping_ui.Ui_Form):
+class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
     def __init__(self, parent=None):
-        super(CShipping, self).__init__(parent)
+        super(CShippingUI, self).__init__(parent)
         self.setupUi(self)
         self.InitUI()
         self.InitConnect()
@@ -30,7 +34,7 @@ class CShipping(QtWidgets.QWidget, shipping_ui.Ui_Form):
         sGoods = self.comboBoxOutputGoods.text()
         if not sGoods:
             return
-        if not pubdefines.call_manager_func("goodsmgr", "HasGoods", sGoods):
+        if not pubdefines.call_manager_func("globalmgr", "HasGoods", sGoods):
             # self.slotInformation("库存中无商品记录")
             return
         fPrice = pubdefines.call_manager_func("goodsmgr", "GetGoodsSellPrice", sGoods)
@@ -83,7 +87,7 @@ class CShipping(QtWidgets.QWidget, shipping_ui.Ui_Form):
             self.slotInformation("商品不能为空")
             return False
         sGoods = self.comboBoxOutputGoods.text()
-        if not pubdefines.call_manager_func("goodsmgr", "HasGoods", sGoods):
+        if not pubdefines.call_manager_func("globalmgr", "HasGoods", sGoods):
             self.slotInformation("库存中无商品记录")
             return False
         # iStock = pubdefines.call_manager_func("goodsmgr", "GetGoodsNum", sGoods)
@@ -108,59 +112,54 @@ class CShipping(QtWidgets.QWidget, shipping_ui.Ui_Form):
 
         tInfo = [iTime, sGoods, sBuyer, fPrice, iNum, sRemark]
         logging.info("OutputGoods:%s" % (tInfo,))
-        self.Log("Output %s" % (tInfo))
+        pubdefines.write_to_file("xh/shipping", str(tInfo))
+
         # 计算本次卖出的利润为多少
+        pubdefines.call_manager_func("shippingmgr", "OutputGoods", *tInfo)
         pubdefines.call_manager_func("goodsmgr", "OutputGoods", sGoods, fPrice, iNum)
-        pubdefines.call_manager_func("sellmgr", "OutputGoods", tInfo)
+
         pubdefines.call_manager_func("globalmgr", "AddBuyer", sBuyer)
-        self.Log("OutputDone %s" % iTime)
+        pubdefines.write_to_file("xh/shipping", str(iTime))
         # self.slotInformation("出货成功")
         self.InitUI()
 
 
 
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
 
-import logging
-from lib import misc
+class CShipping(base.CMulBase):
+    m_TableName = "tbl_shipping"
+    m_KeyList = ["ID"]
+    m_ColType = {
+        "ID":       "integer",
+        "Time":     "integer",
+        "Goods":    "text",
+        "Seller":   "text",
+        "Price":    "real",
+        "Num":      "integer",
+        "Remark":   "text",
+    }
 
-from mytool import pubdefines
-
-TABLE_NAME="tbl_sell"
-TABLE_CREAT_SQL="""
-create table %s
-(
-    ID integer PRIMARY KEY autoincrement,
-    Time datetime not null,
-    Goods text not null,
-    Seller text,
-    Price real not null,
-    Num integer not null,
-    Remark text
-)
-""" % TABLE_NAME
+    def Init(self, *data):
+        iTime, sGoods, sSeller, fPrice, iNum, sRemark = data
+        self.m_Time = iTime
+        self.m_Goods = sGoods
+        self.m_Seller = sSeller
+        self.m_Price = fPrice
+        self.m_Num = iNum
+        self.m_Remark = sRemark
 
 
-class CSellManager(object):
+class CShippingManager(base.CBaseManager):
     
-    ColInfo = [
-        ("Time", "integer"),
-        ("Goods", "text"),
-        ("Seller", "text"),
-        ("Price", "real"),
-        ("Num", "integer"),
-        ("Remark", "text"),
-    ]
-
-    def __init__(self):
-        self.SellInfo = {}
+    def NewObj(self, key):
+        obj = CShipping(key)
+        return obj
 
 
-    def OutputGoods(self, tData):
+    def OutputGoods(self, *data):
         """出货保存数据库"""
-        sql = misc.get_insert_sql(TABLE_NAME, tData, self.ColInfo)
-        pubdefines.call_manager_func("dbmgr", "Excute", sql)
+        ID = pubdefines.call_manager_func("globalmgr", "NewShippingID")
+        self.NewItem(ID, *data)
 
 
     def QueryAllInfo(self):
@@ -198,6 +197,6 @@ class CSellManager(object):
 
 
 
-def InitSell():
-    oSellMgr = CSellManager()
-    pubdefines.set_manager("sellmgr", oSellMgr)
+def InitShipping():
+    obj = CShippingManager()
+    pubdefines.set_manager("shippingmgr", obj)

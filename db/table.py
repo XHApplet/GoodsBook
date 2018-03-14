@@ -34,9 +34,23 @@ create table tbl_purchase
 )
 """
 
+TABLE_SQL_SHIPPING="""
+create table tbl_shipping
+(
+    ID integer PRIMARY KEY autoincrement,
+    Time datetime not null,
+    Goods text not null,
+    Seller text,
+    Price real not null,
+    Num integer not null,
+    Remark text
+)
+"""
+
 
 ALL_TABLES = [
     TABLE_SQL_GLOBAL,
     TABLE_SQL_GOODS,
     TABLE_SQL_PURCHASE,
+    TABLE_SQL_SHIPPING,
 ]
