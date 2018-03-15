@@ -67,8 +67,8 @@ class CPurchaseRecordUI(QtWidgets.QWidget, purchase_record_ui.Ui_Form):
             iAllNum += tBuyInfo[4]
             fPrice += tBuyInfo[3] * tBuyInfo[4]
 
-        self.labelNum.setText("总进货数量:%s" % iAllNum)
-        self.labelAmount.setText("总进货金额:%s" % fPrice)
+        self.labelNum.setText("总进货数量: %s" % iAllNum)
+        self.labelAmount.setText("总进货金额: %s" % fPrice)
         self.labelNum.show()
         self.labelAmount.show()
 

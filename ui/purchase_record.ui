@@ -145,7 +145,7 @@
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">color:rgb(0, 0, 255)</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>总进货数量:</string>
@@ -194,7 +194,7 @@
          <enum>Qt::LeftToRight</enum>
         </property>
         <property name="styleSheet">
-         <string notr="true">color:rgb(255, 0, 0)</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>总进货金额:</string>

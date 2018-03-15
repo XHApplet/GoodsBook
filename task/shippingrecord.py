@@ -80,9 +80,9 @@ class CShippingRecordUI(QtWidgets.QWidget, shipping_record_ui.Ui_Form):
             iAllNum += tSellInfo[4]
             fPrice += tSellInfo[3] * tSellInfo[4]
         
-        self.labelNum.setText("总售货数量:%s" % iAllNum)
-        self.labelAmount.setText("总售货金额:%s" % fPrice)
-        self.labelProfile.setText("总利润:%s" % fProfile)
+        self.labelNum.setText("总售货数量: %s" % iAllNum)
+        self.labelAmount.setText("总售货金额: %s" % fPrice)
+        self.labelProfile.setText("总利润: %s" % fProfile)
         self.labelNum.show()
         self.labelAmount.show()
         self.labelProfile.show()

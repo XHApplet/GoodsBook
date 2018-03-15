@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1035</width>
-    <height>419</height>
+    <height>458</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -191,7 +191,7 @@
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">color:rgb(0, 0, 255)</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>总售货金额:</string>
@@ -221,7 +221,7 @@
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">color:rgb(0, 0, 255)</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>总售货数量:</string>

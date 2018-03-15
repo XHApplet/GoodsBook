@@ -29,6 +29,7 @@ QSS = """
     QLabel {
         color:$foreground1;
         background: $background1;
+        font-size: 20px;
     }
     QComboBox {
         color:$foreground2;

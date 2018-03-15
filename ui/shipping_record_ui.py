@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1035, 419)
+        Form.resize(1035, 458)
         self.verticalLayout = QtWidgets.QVBoxLayout(Form)
         self.verticalLayout.setObjectName("verticalLayout")
         self.widget_3 = QtWidgets.QWidget(Form)
@@ -98,7 +98,7 @@ class Ui_Form(object):
         font = QtGui.QFont()
         font.setPointSize(10)
         self.labelAmount.setFont(font)
-        self.labelAmount.setStyleSheet("color:rgb(0, 0, 255)")
+        self.labelAmount.setStyleSheet("")
         self.labelAmount.setObjectName("labelAmount")
         self.gridLayout_6.addWidget(self.labelAmount, 1, 8, 1, 1)
         self.labelProfile = QtWidgets.QLabel(self.widget_3)
@@ -112,7 +112,7 @@ class Ui_Form(object):
         font = QtGui.QFont()
         font.setPointSize(10)
         self.labelNum.setFont(font)
-        self.labelNum.setStyleSheet("color:rgb(0, 0, 255)")
+        self.labelNum.setStyleSheet("")
         self.labelNum.setObjectName("labelNum")
         self.gridLayout_6.addWidget(self.labelNum, 0, 8, 1, 1)
         self.verticalLayout.addWidget(self.widget_3)

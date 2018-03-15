@@ -69,7 +69,7 @@ class Ui_Form(object):
         self.gridLayout.addWidget(self.label_3, 1, 3, 1, 1)
         self.label = QtWidgets.QLabel(Form)
         font = QtGui.QFont()
-        font.setPointSize(30)
+        font.setPointSize(40)
         self.label.setFont(font)
         self.label.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
