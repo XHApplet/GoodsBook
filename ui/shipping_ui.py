@@ -120,6 +120,12 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
+        Form.setTabOrder(self.dateEditOutput, self.comboBoxOutputGoods)
+        Form.setTabOrder(self.comboBoxOutputGoods, self.comboBoxOutputBuyer)
+        Form.setTabOrder(self.comboBoxOutputBuyer, self.lineEditOutputPrice)
+        Form.setTabOrder(self.lineEditOutputPrice, self.lineEditOutputNum)
+        Form.setTabOrder(self.lineEditOutputNum, self.lineEditOutputRemark)
+        Form.setTabOrder(self.lineEditOutputRemark, self.pushButtonOutput)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

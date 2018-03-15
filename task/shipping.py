@@ -12,7 +12,7 @@ import logging
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from ui import shipping_ui
-from lib import misc
+from lib import misc, pubui
 from mytool import pubdefines
 from . import base
 
@@ -48,7 +48,7 @@ class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
         if not sGoods:
             return
         if not pubdefines.call_manager_func("globalmgr", "HasGoods", sGoods):
-            # self.slotInformation("库存中无商品记录")
+            # pubui.slotInformation("库存中无商品记录")
             return
         fPrice = pubdefines.call_manager_func("goodsmgr", "GetGoodsSellPrice", sGoods)
         if abs(fPrice) > 1e-6:
@@ -86,28 +86,28 @@ class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
     def ValidOutput(self):
         """卖出商品时控件判断"""
         if not self.lineEditOutputPrice.text():
-            self.slotInformation("价格不能为空")
+            pubui.slotInformation("价格不能为空")
             return False
         if not self.lineEditOutputNum.text():
-            self.slotInformation("数量不能为空")
+            pubui.slotInformation("数量不能为空")
             return False
         if not self.dateEditOutput.dateTime():
-            self.slotInformation("日期不能为空")
+            pubui.slotInformation("日期不能为空")
             return False
         if not self.comboBoxOutputBuyer.currentText():
-            self.slotInformation("买家不能为空")
+            pubui.slotInformation("买家不能为空")
             return False
         if not self.comboBoxOutputGoods.currentText():
-            self.slotInformation("商品不能为空")
+            pubui.slotInformation("商品不能为空")
             return False
         sGoods = self.comboBoxOutputGoods.text()
         if not pubdefines.call_manager_func("globalmgr", "HasGoods", sGoods):
-            self.slotInformation("库存中无商品记录")
+            pubui.slotInformation("库存中无商品记录")
             return False
         # iStock = pubdefines.call_manager_func("goodsmgr", "GetGoodsNum", sGoods)
         # iNum = int(self.lineEditOutputNum.text())
         # if iStock < iNum:
-        #     self.slotInformation("没有足够的库存,当前库存%s" % iStock)
+        #     pubui.slotInformation("没有足够的库存,当前库存%s" % iStock)
         #     return False
         return True
 
@@ -134,7 +134,7 @@ class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
 
         pubdefines.call_manager_func("globalmgr", "AddBuyer", sBuyer)
         pubdefines.write_to_file("xh/shipping", str(iTime))
-        # self.slotInformation("出货成功")
+        # pubui.slotInformation("出货成功")
         self.InitUI()
 
 
@@ -210,6 +210,15 @@ class CShippingManager(base.CBaseManager):
             logging.debug("sell record:%s %s" % (ID, tData))
             dSellInfo[ID] = tData
         return dSellInfo
+
+
+    def DelShipping4DB(self, iID):
+        """从数据库中删除一条出货记录"""
+        obj = self.GetItemBlock(iID)
+        if not obj:
+            return
+        pubdefines.call_manager_func("goodsmgr", "AddGoodsNum", obj.m_Goods, obj.m_Num)
+        self.DelItemBlock(iID)
 
 
 

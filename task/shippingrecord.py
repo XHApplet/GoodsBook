@@ -34,6 +34,7 @@ class CShippingRecordUI(QtWidgets.QWidget, shipping_record_ui.Ui_Form):
 
     def InitConnect(self):
         self.pushButtonQueryOutputRecord.clicked.connect(self.QueryOutputRecord)
+        self.tableWidgetOutputRecord.cellDoubleClicked.connect(self.CellDoubleClicked)
 
 
     def QueryOutputRecord(self):
@@ -48,13 +49,13 @@ class CShippingRecordUI(QtWidgets.QWidget, shipping_record_ui.Ui_Form):
         sBuyer = self.comboBoxOutputRecordBuyer.currentText()
 
         dSellInfo = pubdefines.call_manager_func("shippingmgr", "GetSellInfoRecord", iBeginTime, iEndTime, sGoods, sBuyer)
-        lstHead = ["日期", "商品", "卖家", "售价", "数量", "备注", "利润"]
+        lstHead = ["日期", "商品", "卖家", "售价", "数量", "备注", "利润", "双击删除"]
         self.tableWidgetOutputRecord.setColumnCount(len(lstHead))
         self.tableWidgetOutputRecord.setRowCount(len(dSellInfo))
         self.tableWidgetOutputRecord.setHorizontalHeaderLabels(lstHead)
         self.tableWidgetOutputRecord.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         iRow = iAllNum = fPrice = fProfile = 0
-        for _, tSellInfo in dSellInfo.items():
+        for iID, tSellInfo in dSellInfo.items():
             iTime, sGoods, sSeller, fSellPrice, iNum, sRemark = tSellInfo
             for iCol, xValue in enumerate(tSellInfo):
                 if iCol == 0:
@@ -62,11 +63,18 @@ class CShippingRecordUI(QtWidgets.QWidget, shipping_record_ui.Ui_Form):
                 item = QtWidgets.QTableWidgetItem(str(xValue))
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.tableWidgetOutputRecord.setItem(iRow, iCol, item)
+            
             fBuyPrice = pubdefines.call_manager_func("goodsmgr", "GetGoodsBuyPrice", sGoods)
             fCurProfile = (fSellPrice - fBuyPrice) * iNum
             item = QtWidgets.QTableWidgetItem(str(fCurProfile))
             item.setTextAlignment(QtCore.Qt.AlignCenter)
             self.tableWidgetOutputRecord.setItem(iRow, iCol + 1, item)
+
+            icon = QtGui.QIcon(QtGui.QPixmap("image/main.ico"))
+            item = QtWidgets.QTableWidgetItem(icon, str(iID))
+            item.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidgetOutputRecord.setItem(iRow, iCol + 2, item)
+
             iRow += 1
             fProfile += fCurProfile
             iAllNum += tSellInfo[4]
@@ -78,3 +86,12 @@ class CShippingRecordUI(QtWidgets.QWidget, shipping_record_ui.Ui_Form):
         self.labelNum.show()
         self.labelAmount.show()
         self.labelProfile.show()
+
+
+    def CellDoubleClicked(self, iRow, iCol):
+        if iCol != 7:
+            return
+        item = self.tableWidgetOutputRecord.item(iRow, iCol)
+        iID = int(item.text())
+        pubdefines.call_manager_func("shippingmgr", "DelShipping4DB", iID)
+        self.QueryOutputRecord()

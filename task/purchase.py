@@ -14,6 +14,7 @@ from mytool import pubdefines
 from PyQt5 import QtWidgets, QtCore, QtGui
 from ui import purchase_ui
 from . import base
+from lib import pubui
 
 
 class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
@@ -74,19 +75,19 @@ class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
     def ValidInput(self):
         """录入商品时控件判断"""
         if not self.lineEditInputPrice.text():
-            self.slotInformation("价格不能为空")
+            pubui.slotInformation("价格不能为空")
             return False
         if not self.lineEditInputNum.text():
-            self.slotInformation("数量不能为空")
+            pubui.slotInformation("数量不能为空")
             return False
         if not self.dateEditInput.dateTime():
-            self.slotInformation("日期不能为空")
+            pubui.slotInformation("日期不能为空")
             return False
         if not self.comboBoxInputType.currentText():
-            self.slotInformation("类别不能为空")
+            pubui.slotInformation("类别不能为空")
             return False
         if not self.comboBoxInputGoods.currentText():
-            self.slotInformation("商品不能为空")
+            pubui.slotInformation("商品不能为空")
             return False
         return True
 
@@ -114,7 +115,7 @@ class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
 
         pubdefines.call_manager_func("globalmgr", "AddGoods", sGoodsType, sGoods)
         pubdefines.write_to_file("xh/purchase", str(iTime))
-        # self.slotInformation("进货成功")
+        # pubui.slotInformation("进货成功")
         self.InitUI()
 
 
@@ -206,6 +207,16 @@ class CPurchaseManager(base.CBaseManager):
             logging.debug("buy record:%s %s" % (ID, tData))
             dBuyInfo[ID] = tData
         return dBuyInfo
+
+
+    def DelPurchase4DB(self, iID):
+        """从数据库中删除一条进货记录"""
+        obj = self.GetItemBlock(iID)
+        if not obj:
+            return
+        pubdefines.call_manager_func("goodsmgr", "AddGoodsNum", obj.m_Goods, -obj.m_Num)
+        self.DelItemBlock(iID)
+
 
 
 def InitPurchase():

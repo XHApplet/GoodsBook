@@ -31,7 +31,7 @@ class CPurchaseRecordUI(QtWidgets.QWidget, purchase_record_ui.Ui_Form):
 
     def InitConnect(self):
         self.pushButtonQueryInputRecord.clicked.connect(self.QueryInputRecord)
-
+        self.tableWidgetInputRecord.cellDoubleClicked.connect(self.CellDoubleClicked)
 
     def QueryInputRecord(self):
         """查询进货记录"""
@@ -44,13 +44,13 @@ class CPurchaseRecordUI(QtWidgets.QWidget, purchase_record_ui.Ui_Form):
         sGoods = self.comboBoxInputRecord.currentText()
 
         dbuyInfo = pubdefines.call_manager_func("purchasemgr", "GetBuyInfoRecord", iBeginTime, iEndTime, sGoods)
-        lstHead = ["日期", "类型", "商品", "进价", "数量", "备注"]
+        lstHead = ["日期", "类型", "商品", "进价", "数量", "备注", "双击删除"]
         self.tableWidgetInputRecord.setColumnCount(len(lstHead))
         self.tableWidgetInputRecord.setRowCount(len(dbuyInfo))
         self.tableWidgetInputRecord.setHorizontalHeaderLabels(lstHead)
         self.tableWidgetInputRecord.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         iRow = iAllNum = fPrice = 0
-        for _, tBuyInfo in dbuyInfo.items():
+        for iID, tBuyInfo in dbuyInfo.items():
             for iCol, xValue in enumerate(tBuyInfo):
                 if iCol == 0:
                     xValue = pubdefines.time_to_str(tBuyInfo[iCol])
@@ -58,6 +58,11 @@ class CPurchaseRecordUI(QtWidgets.QWidget, purchase_record_ui.Ui_Form):
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.tableWidgetInputRecord.setItem(iRow, iCol, item)
             
+            icon = QtGui.QIcon(QtGui.QPixmap("image/main.ico"))
+            item = QtWidgets.QTableWidgetItem(icon, str(iID))
+            item.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidgetInputRecord.setItem(iRow, iCol + 1, item)
+
             iRow += 1
             iAllNum += tBuyInfo[4]
             fPrice += tBuyInfo[3] * tBuyInfo[4]
@@ -66,3 +71,12 @@ class CPurchaseRecordUI(QtWidgets.QWidget, purchase_record_ui.Ui_Form):
         self.labelAmount.setText("总进货金额:%s" % fPrice)
         self.labelNum.show()
         self.labelAmount.show()
+
+
+    def CellDoubleClicked(self, iRow, iCol):
+        if iCol != 6:
+            return
+        item = self.tableWidgetInputRecord.item(iRow, iCol)
+        iID = int(item.text())
+        pubdefines.call_manager_func("purchasemgr", "DelPurchase4DB", iID)
+        self.QueryInputRecord()

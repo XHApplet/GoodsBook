@@ -32,6 +32,17 @@ class CBaseManager(object):
         del self.m_ItemDict[key]
 
 
+    def DelItemBlock(self, key):
+        """从数据库、内存中删除数据"""
+        obj = self.GetItemBlock(key)
+        if not obj:
+            return
+        if hasattr(obj, "Release"):
+            obj.Release()
+        obj.Delete()
+        del self.m_ItemDict[key]
+
+
     def LoadItem(self, key):
         """从数据库中加载数据"""
         obj = self.NewObj(key)

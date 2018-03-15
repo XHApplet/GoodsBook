@@ -62,3 +62,7 @@ class ExtendedComboBox(QtWidgets.QComboBox):
 
     def focusOutEvent(self, e):
         self.MyFocusOutSignal.emit()
+
+def slotInformation(sMsg, sTitle="提示"):
+    QtWidgets.QMessageBox.information(None, sTitle, sMsg)
+

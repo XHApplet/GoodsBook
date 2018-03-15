@@ -4,11 +4,10 @@ import os
 import sys
 import logging
 
-from mytool import pubdefines
 from ui import mainwidget_ui
 from PyQt5 import QtCore, QtGui, QtWidgets
 from . import purchase, shipping, profile, goods, purchaserecord, shippingrecord
-
+from lib import style
 
 class CMainWidget(QtWidgets.QMainWindow, mainwidget_ui.Ui_MainWindow):
     def __init__(self, parent=None):
@@ -19,6 +18,11 @@ class CMainWidget(QtWidgets.QMainWindow, mainwidget_ui.Ui_MainWindow):
 
 
     def InitUI(self):
+        # self.setStyle(QtWidgets.QStyleFactory.create("Fusion"))
+        
+        sStyle = style.GetSytle()
+        self.setStyleSheet(sStyle)
+
         self.setStyle(QtWidgets.QStyleFactory.create("Fusion"))
         self.m_Purchase = purchase.CPurchaseUI(self)
         self.m_Shipping = shipping.CShippingUI(self)

@@ -122,6 +122,12 @@ class CGoodsManager(base.CBaseManager):
             return obj.GetGoodsInfo()
 
 
+    def AddGoodsNum(self, sGoods, iNum):
+        obj = self.GetItemBlock(sGoods)
+        if obj:
+            obj.AddNum(iNum)
+
+
     # def GetGoodsNum(self, sGoods):
     #     tInfo = self.GoodsInfo.get(sGoods, None)
     #     assert tInfo is not None
@@ -253,6 +259,12 @@ class CGoods(base.CMulBase):
             return
         self.m_SellPrice = fSellPrice
         self.Save(*["SellPrice"])
+
+
+    def AddNum(self, iNum):
+        self.m_Num += iNum
+        self.Save(*["Num"])
+
 
 
 def InitGoods():

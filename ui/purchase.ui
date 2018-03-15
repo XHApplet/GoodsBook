@@ -349,6 +349,15 @@
    <header location="global">lib.pubui</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>dateEditInput</tabstop>
+  <tabstop>comboBoxInputType</tabstop>
+  <tabstop>comboBoxInputGoods</tabstop>
+  <tabstop>lineEditInputPrice</tabstop>
+  <tabstop>lineEditInputNum</tabstop>
+  <tabstop>lineEditInputRemark</tabstop>
+  <tabstop>pushButtonInput</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
