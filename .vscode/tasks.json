@@ -6,7 +6,7 @@
         {
             "label": "ui2py",
             "type": "shell",
-            "command": "python ${workspaceRoot}/mytool/py2ui.py",
+            "command": "${config:python.pythonPath} ${workspaceRoot}/mytool/py2ui.py",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -19,7 +19,7 @@
         {
             "label": "run main",
             "type": "shell",
-            "command": "python main.py",
+            "command": "${config:python.pythonPath} main.py",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -29,7 +29,7 @@
         {
             "label": "run current",
             "type": "shell",
-            "command": "python ${file}",
+            "command": "${config:python.pythonPath} ${file}",
             "group": {
                 "kind": "build",
                 "isDefault": true
