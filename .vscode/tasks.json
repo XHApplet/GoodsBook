@@ -35,16 +35,6 @@
                 "isDefault": true
             },
             "problemMatcher": []
-        },
-        {
-            "label": "mklink mytool",
-            "type": "shell",
-            "command": "mklink /j ${workspaceRoot}\\mytool ${workspaceRoot}\\..\\mytool",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
         }
     ]
 }
