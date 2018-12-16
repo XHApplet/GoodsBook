@@ -6,16 +6,16 @@ import logging
 import task
 import db
 
-from mytool import pubdefines
+from pubcode.pubfunc import pubmisc
 
 
 def InitConfig():
     if not os.path.exists("xh"):
         os.makedirs("xh")
     sLogDir = os.path.join(os.getcwd(), "log")
-    pubdefines.makedirs(sLogDir)
+    pubmisc.MakeDirs(sLogDir)
     logging.basicConfig(
-        filename="log/log%s.log" % pubdefines.time_to_str(timeformat="%Y-%m-%d %H-%M-%S"),
+        filename="log/log%s.log" % pubmisc.Time2Str(timeformat="%Y-%m-%d %H-%M-%S"),
         format="[%(asctime)s] [%(levelname)s] [%(filename)s] [%(lineno)s] %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.DEBUG,

@@ -6,7 +6,7 @@ import sqlite3
 import logging
 
 from . import table
-from mytool import pubdefines
+from pubcode.pubfunc import pubmisc
 
 
 class CDBManager(object):

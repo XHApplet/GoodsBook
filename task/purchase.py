@@ -7,10 +7,9 @@
 @Desc:  进货相关
 """
 
-import sys
 import logging
 
-from mytool import pubdefines
+from pubcode.pubfunc import pubmisc
 from PyQt5 import QtWidgets, QtCore, QtGui
 from ui import purchase_ui
 from . import base
@@ -25,7 +24,6 @@ class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
         self.InitUI()
         self.InitConnect()
 
-
     def InitControl(self):
         """初始化控件+限制"""
         tRegExp = QtCore.QRegExp("^(-?\d+)(\.\d+)?$")
@@ -34,16 +32,15 @@ class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
         self.lineEditInputPrice.setValidator(self.ValidatorPrice)
         self.lineEditInputNum.setValidator(self.ValidatorNum)
 
-
     def InitUI(self):
         """初始化录入商品界面"""
         oCurData = QtCore.QDate.currentDate()
         self.dateEditInput.setDate(oCurData)
         self.comboBoxInputType.clear()
         self.comboBoxInputGoods.clear()
-        lstGoodsType = pubdefines.call_manager_func("globalmgr", "GetAllType")
+        lstGoodsType = pubmisc.CallManagerFunc("globalmgr", "GetAllType")
         self.comboBoxInputType.addItems(lstGoodsType)
-        lstGoods = pubdefines.call_manager_func("globalmgr", "GetAllGoodsList")
+        lstGoods = pubmisc.CallManagerFunc("globalmgr", "GetAllGoodsList")
         self.comboBoxInputGoods.addItems(lstGoods)
         self.comboBoxInputType.setCurrentIndex(0)
         self.comboBoxInputGoods.setCurrentIndex(-1)
@@ -53,13 +50,11 @@ class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
         self.lineEditInputRemark.setText("")
         self.labelAmount.hide()
 
-
     def InitConnect(self):
         self.pushButtonInput.clicked.connect(self.OnPurchase)
         self.comboBoxInputGoods.MyFocusOutSignal.connect(self.FocusOutInputGoods)
         self.lineEditInputNum.editingFinished.connect(self.TipAmount)
         self.lineEditInputPrice.editingFinished.connect(self.TipAmount)
-
 
     def TipAmount(self):
         sPrice = self.lineEditInputPrice.text()
@@ -70,7 +65,6 @@ class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
             iAmount = fPrice * iNum
             self.labelAmount.setText("总价:" + str(iAmount))
             self.labelAmount.show()
-
 
     def ValidInput(self):
         """录入商品时控件判断"""
@@ -91,7 +85,6 @@ class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
             return False
         return True
 
-
     def OnPurchase(self):
         """点击录入商品调用"""
         if not self.ValidInput():
@@ -105,38 +98,36 @@ class CPurchaseUI(QtWidgets.QWidget, purchase_ui.Ui_Form):
         iNum = int(self.lineEditInputNum.text())
         sRemark = self.lineEditInputRemark.text()
 
-        # TODO 判断是否已经有了.增加商品、价格判断
         tInfo = [iTime, sGoodsType, sGoods, fPrice, iNum, sRemark]
         logging.info("InputGoods:%s" % (tInfo,))
-        pubdefines.write_to_file("xh/purchase", str(tInfo))
+        pubmisc.Write2File("xh/purchase", str(tInfo))
 
-        pubdefines.call_manager_func("purchasemgr", "InputGoods", *tInfo)
-        pubdefines.call_manager_func("goodsmgr", "InputGoods", sGoods, fPrice, iNum)
+        pubmisc.CallManagerFunc("purchasemgr", "InputGoods", *tInfo)
+        pubmisc.CallManagerFunc("goodsmgr", "InputGoods", sGoods, fPrice, iNum)
 
-        pubdefines.call_manager_func("globalmgr", "AddGoods", sGoodsType, sGoods)
-        pubdefines.write_to_file("xh/purchase", str(iTime))
+        pubmisc.CallManagerFunc("globalmgr", "AddGoods", sGoodsType, sGoods)
+        pubmisc.Write2File("xh/purchase", str(iTime))
         # pubui.slotInformation("进货成功")
         self.InitUI()
-
 
     def FocusOutInputGoods(self):
         """录入商品：当输入完商品之后自动填写类型+价格"""
         sGoods = self.comboBoxInputGoods.text()
         if not sGoods:
             return
-        if not pubdefines.call_manager_func("globalmgr", "HasGoods", sGoods):
+        if not pubmisc.CallManagerFunc("globalmgr", "HasGoods", sGoods):
             self.InputTiplabel.show()
             return
         self.InputTiplabel.hide()
-        fPrice = pubdefines.call_manager_func("goodsmgr", "GetGoodsBuyPrice", sGoods)
+        fPrice = pubmisc.CallManagerFunc("goodsmgr", "GetGoodsBuyPrice", sGoods)
         self.lineEditInputPrice.setText(str(fPrice))    # 价格自动变
-        sType = pubdefines.call_manager_func("globalmgr", "GetGoodsType", sGoods)
+        sType = pubmisc.CallManagerFunc("globalmgr", "GetGoodsType", sGoods)
         if sType:
             self.comboBoxInputType.setCurrentText(sType)
 
 
-
 TABLE_NAME = "tbl_purchase"
+
 
 class CPurchase(base.CMulBase):
 
@@ -152,6 +143,14 @@ class CPurchase(base.CMulBase):
         "Remark":   "text",
     }
 
+    def __init__(self, *args, **kwargs):
+        self.m_Time = None
+        self.m_Type = None
+        self.m_Goods = None
+        self.m_Price = None
+        self.m_Num = None
+        self.m_Remark = None
+        super(CPurchase, self).__init__(*args, **kwargs)
 
     def Init(self, *data):
         iTime, sType, sGoods, fPrice, iNum, sRemark = data
@@ -163,38 +162,32 @@ class CPurchase(base.CMulBase):
         self.m_Remark = sRemark
 
 
-
 class CPurchaseManager(base.CBaseManager):
 
     def NewObj(self, key):
         obj = CPurchase(key)
         return obj
-        
 
     def InputGoods(self, *data):
         """进货保存数据库"""
-        ID = pubdefines.call_manager_func("globalmgr", "NewPurchaseID")
+        ID = pubmisc.CallManagerFunc("globalmgr", "NewPurchaseID")
         self.NewItem(ID, *data)
-
 
     def QueryAllInfo(self):
         """查询所有的进货信息"""
         sql = "select * from %s" % TABLE_NAME
-        result = pubdefines.call_manager_func("dbmgr", "Query", sql)
+        result = pubmisc.CallManagerFunc("dbmgr", "Query", sql)
         for ID, *tData in result:
             logging.debug("buy query:%s %s" % (ID, tData))
-            self.BuyInfo[ID] = tData
-
 
     def GetBuyInfo(self, iBegin, iEnd):
         dBuyInfo = {}
         sql = "select * from %s where Time>=%s and Time<=%s" % (TABLE_NAME, iBegin, iEnd)
-        result = pubdefines.call_manager_func("dbmgr", "Query", sql)
+        result = pubmisc.CallManagerFunc("dbmgr", "Query", sql)
         for ID, *tData in result:
             logging.debug("buy info:%s %s" % (ID, tData))
             dBuyInfo[ID] = tData
         return dBuyInfo
-
 
     def GetBuyInfoRecord(self, iBegin, iEnd, sGoods):
         dBuyInfo = {}
@@ -202,24 +195,21 @@ class CPurchaseManager(base.CBaseManager):
         if sGoods:
             sql = sql + " and Goods like '%%%s%%'" % sGoods
         sql += " ORDER BY Time"
-        result = pubdefines.call_manager_func("dbmgr", "Query", sql)
+        result = pubmisc.CallManagerFunc("dbmgr", "Query", sql)
         for ID, *tData in result:
             logging.debug("buy record:%s %s" % (ID, tData))
             dBuyInfo[ID] = tData
         return dBuyInfo
-
 
     def DelPurchase4DB(self, iID):
         """从数据库中删除一条进货记录"""
         obj = self.GetItemBlock(iID)
         if not obj:
             return
-        pubdefines.call_manager_func("goodsmgr", "AddGoodsNum", obj.m_Goods, -obj.m_Num)
+        pubmisc.CallManagerFunc("goodsmgr", "AddGoodsNum", obj.m_Goods, -obj.m_Num)
         self.DelItemBlock(iID)
-
 
 
 def InitPurchase():
     obj = CPurchaseManager()
-    pubdefines.set_manager("purchasemgr", obj)
-
+    pubmisc.SetManager("purchasemgr", obj)

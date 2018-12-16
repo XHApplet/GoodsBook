@@ -7,10 +7,10 @@
 @Desc:  
 """
 
-from mytool import pubdefines
+from pubcode.pubfunc import pubmisc
 from . import dbmanager
+
 
 def InitDB():
     obj = dbmanager.CDBManager()
-    pubdefines.set_manager("dbmgr", obj)
-
+    pubmisc.SetManager("dbmgr", obj)

@@ -7,14 +7,15 @@
 @Desc:  出货相关
 """
 
-import sys
 import logging
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from ui import shipping_ui
-from lib import misc, pubui
-from mytool import pubdefines
+from lib import pubui
 from . import base
+
+from pubcode.pubfunc import pubmisc
+
 
 class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
     def __init__(self, parent=None):
@@ -23,13 +24,11 @@ class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
         self.InitUI()
         self.InitConnect()
 
-
     def InitConnect(self):
         self.pushButtonOutput.clicked.connect(self.OutputGoods)
         self.comboBoxOutputGoods.MyFocusOutSignal.connect(self.FocusOutOutputGoods)
         self.lineEditOutputNum.editingFinished.connect(self.TipAmount)
         self.lineEditOutputPrice.editingFinished.connect(self.TipAmount)
-
 
     def TipAmount(self):
         sPrice = self.lineEditOutputPrice.text()
@@ -40,20 +39,18 @@ class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
             iAmount = fPrice * iNum
             self.labelAmount.setText("总价:" + str(iAmount))
             self.labelAmount.show()
-            
 
     def FocusOutOutputGoods(self):
         """卖出商品：当输入完商品之后自动填写价格"""
         sGoods = self.comboBoxOutputGoods.text()
         if not sGoods:
             return
-        if not pubdefines.call_manager_func("globalmgr", "HasGoods", sGoods):
+        if not pubmisc.CallManagerFunc("globalmgr", "HasGoods", sGoods):
             # pubui.slotInformation("库存中无商品记录")
             return
-        fPrice = pubdefines.call_manager_func("goodsmgr", "GetGoodsSellPrice", sGoods)
+        fPrice = pubmisc.CallManagerFunc("goodsmgr", "GetGoodsSellPrice", sGoods)
         if abs(fPrice) > 1e-6:
             self.lineEditOutputPrice.setText(str(fPrice))    # 价格自动变
-
 
     def InitControl(self):
         """初始化控件+限制"""
@@ -64,16 +61,15 @@ class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
         self.lineEditOutputPrice.setValidator(self.ValidatorPrice)
         self.lineEditOutputNum.setValidator(self.ValidatorNum)
 
-
     def InitUI(self):
         """初始化卖出商品界面"""
         oCurData = QtCore.QDate.currentDate()
         self.dateEditOutput.setDate(oCurData)
         self.comboBoxOutputGoods.clear()
         self.comboBoxOutputBuyer.clear()
-        lstGoods = pubdefines.call_manager_func("globalmgr", "GetAllGoodsList")
+        lstGoods = pubmisc.CallManagerFunc("globalmgr", "GetAllGoodsList")
         self.comboBoxOutputGoods.addItems(lstGoods)
-        lstBuyer = pubdefines.call_manager_func("globalmgr", "GetAllBuyer")
+        lstBuyer = pubmisc.CallManagerFunc("globalmgr", "GetAllBuyer")
         self.comboBoxOutputBuyer.addItems(lstBuyer)
         self.comboBoxOutputGoods.setCurrentIndex(-1)
         self.comboBoxOutputBuyer.setCurrentIndex(-1)
@@ -81,7 +77,6 @@ class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
         self.lineEditOutputPrice.setText("")
         self.lineEditOutputRemark.setText("")
         self.labelAmount.hide()
-
 
     def ValidOutput(self):
         """卖出商品时控件判断"""
@@ -101,16 +96,15 @@ class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
             pubui.slotInformation("商品不能为空")
             return False
         sGoods = self.comboBoxOutputGoods.text()
-        if not pubdefines.call_manager_func("globalmgr", "HasGoods", sGoods):
+        if not pubmisc.CallManagerFunc("globalmgr", "HasGoods", sGoods):
             pubui.slotInformation("库存中无商品记录")
             return False
-        # iStock = pubdefines.call_manager_func("goodsmgr", "GetGoodsNum", sGoods)
+        # iStock = pubmisc.CallManagerFunc("goodsmgr", "GetGoodsNum", sGoods)
         # iNum = int(self.lineEditOutputNum.text())
         # if iStock < iNum:
         #     pubui.slotInformation("没有足够的库存,当前库存%s" % iStock)
         #     return False
         return True
-
 
     def OutputGoods(self):
         if not self.ValidOutput():
@@ -126,19 +120,20 @@ class CShippingUI(QtWidgets.QWidget, shipping_ui.Ui_Form):
 
         tInfo = [iTime, sGoods, sBuyer, fPrice, iNum, sRemark]
         logging.info("OutputGoods:%s" % (tInfo,))
-        pubdefines.write_to_file("xh/shipping", str(tInfo))
+        pubmisc.Write2File("xh/shipping", str(tInfo))
 
         # 计算本次卖出的利润为多少
-        pubdefines.call_manager_func("shippingmgr", "OutputGoods", *tInfo)
-        pubdefines.call_manager_func("goodsmgr", "OutputGoods", sGoods, fPrice, iNum)
+        pubmisc.CallManagerFunc("shippingmgr", "OutputGoods", *tInfo)
+        pubmisc.CallManagerFunc("goodsmgr", "OutputGoods", sGoods, fPrice, iNum)
 
-        pubdefines.call_manager_func("globalmgr", "AddBuyer", sBuyer)
-        pubdefines.write_to_file("xh/shipping", str(iTime))
+        pubmisc.CallManagerFunc("globalmgr", "AddBuyer", sBuyer)
+        pubmisc.Write2File("xh/shipping", str(iTime))
         # pubui.slotInformation("出货成功")
         self.InitUI()
 
 
 TABLE_NAME = "tbl_shipping"
+
 
 class CShipping(base.CMulBase):
 
@@ -165,37 +160,33 @@ class CShipping(base.CMulBase):
 
 
 class CShippingManager(base.CBaseManager):
-    
+
     def NewObj(self, key):
         obj = CShipping(key)
         return obj
 
-
     def OutputGoods(self, *data):
         """出货保存数据库"""
-        ID = pubdefines.call_manager_func("globalmgr", "NewShippingID")
+        ID = pubmisc.CallManagerFunc("globalmgr", "NewShippingID")
         self.NewItem(ID, *data)
-
 
     # def QueryAllInfo(self):
     #     """查询所有的进货信息"""
     #     sql = "select * from %s" % TABLE_NAME
-    #     result = pubdefines.call_manager_func("dbmgr", "Query", sql)
+    #     result = pubmisc.CallManagerFunc("dbmgr", "Query", sql)
     #     for ID, *tData in result:
     #         logging.debug("sell query:%s %s" % (ID, tData))
     #         self.SellInfo[ID] = tData
-
 
     def GetSellInfo(self, iBegin, iEnd):
         """查询iBegin-iEnd时间段的出货信息"""
         dSellInfo = {}
         sql = "select * from %s where Time>=%s and Time<=%s" % (TABLE_NAME, iBegin, iEnd)
-        result = pubdefines.call_manager_func("dbmgr", "Query", sql)
+        result = pubmisc.CallManagerFunc("dbmgr", "Query", sql)
         for ID, *tData in result:
             logging.debug("sell info:%s %s" % (ID, tData))
             dSellInfo[ID] = tData
         return dSellInfo
-
 
     def GetSellInfoRecord(self, iBegin, iEnd, sGoods, sBuyer):
         dSellInfo = {}
@@ -205,23 +196,21 @@ class CShippingManager(base.CBaseManager):
         if sBuyer:
             sql = sql + " and Seller like '%%%s%%'" % sBuyer
         sql += " ORDER BY Time"
-        result = pubdefines.call_manager_func("dbmgr", "Query", sql)
+        result = pubmisc.CallManagerFunc("dbmgr", "Query", sql)
         for ID, *tData in result:
             logging.debug("sell record:%s %s" % (ID, tData))
             dSellInfo[ID] = tData
         return dSellInfo
-
 
     def DelShipping4DB(self, iID):
         """从数据库中删除一条出货记录"""
         obj = self.GetItemBlock(iID)
         if not obj:
             return
-        pubdefines.call_manager_func("goodsmgr", "AddGoodsNum", obj.m_Goods, obj.m_Num)
+        pubmisc.CallManagerFunc("goodsmgr", "AddGoodsNum", obj.m_Goods, obj.m_Num)
         self.DelItemBlock(iID)
-
 
 
 def InitShipping():
     obj = CShippingManager()
-    pubdefines.set_manager("shippingmgr", obj)
+    pubmisc.SetManager("shippingmgr", obj)

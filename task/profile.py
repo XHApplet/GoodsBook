@@ -7,19 +7,19 @@
 @Desc:  利润相关
 """
 
-import sys
-
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore
 from ui import profile_ui
-from mytool import pubdefines
+from pubcode.pubfunc import pubmisc
+
 
 class CProfileUI(QtWidgets.QWidget, profile_ui.Ui_Form):
     def __init__(self, parent=None):
         super(CProfileUI, self).__init__(parent)
         self.setupUi(self)
+        self.MaxProfileCol = 0
+        self.ProfileInfo = {}
         self.InitUI()
         self.InitConnect()
-
 
     def InitUI(self):
         """初始化利润界面"""
@@ -27,10 +27,8 @@ class CProfileUI(QtWidgets.QWidget, profile_ui.Ui_Form):
         self.dateEditBegin.setDate(oCurData.addMonths(-1))
         self.dateEditEnd.setDate(oCurData)
 
-
     def InitConnect(self):
         self.pushButtonQuery.clicked.connect(self.QueryProfile)
-
 
     def GetProfileByDate(self, sGoods, sTimeKey):
         if not sGoods in self.ProfileInfo:
@@ -39,7 +37,6 @@ class CProfileUI(QtWidgets.QWidget, profile_ui.Ui_Form):
             return ""
         return self.ProfileInfo[sGoods][sTimeKey]
 
-
     def AddProfile(self, sGoods, sTimeKey, fProfile):
         if not sGoods in self.ProfileInfo:
             self.ProfileInfo[sGoods] = {}
@@ -47,24 +44,23 @@ class CProfileUI(QtWidgets.QWidget, profile_ui.Ui_Form):
             self.ProfileInfo[sGoods][sTimeKey] = 0
         self.ProfileInfo[sGoods][sTimeKey] += fProfile
 
-
     def QueryProfile(self):
         """查询利润"""
         oBeginDate = self.dateEditBegin.date()
         sBeginTime = oBeginDate.toString("yyyy-MM-dd 00:00:00")
-        iBeginTime = pubdefines.str_to_time(sBeginTime)
+        iBeginTime = pubmisc.Str2Time(sBeginTime)
         oEndDate = self.dateEditEnd.date()
         sEndTime = oEndDate.toString("yyyy-MM-dd 23:59:59")
-        iEndTime = pubdefines.str_to_time(sEndTime)
+        iEndTime = pubmisc.Str2Time(sEndTime)
         self.MaxProfileCol = 0
-        dSellInfo = pubdefines.call_manager_func("shippingmgr", "GetSellInfo", iBeginTime, iEndTime)
+        dSellInfo = pubmisc.CallManagerFunc("shippingmgr", "GetSellInfo", iBeginTime, iEndTime)
         self.ProfileInfo = {}
         for _, tSellInfo in dSellInfo.items():
             iTime, sGoods, _, fSellPrice, iNum, __ = tSellInfo
-            sTime = pubdefines.time_to_str(iTime)
-            fBuyPrice = pubdefines.call_manager_func("goodsmgr", "GetGoodsBuyPrice", sGoods)
+            sTime = pubmisc.Time2Str(iTime)
+            fBuyPrice = pubmisc.CallManagerFunc("goodsmgr", "GetGoodsBuyPrice", sGoods)
             fProfile = (fSellPrice - fBuyPrice) * iNum
-            
+
             sDayTime = sTime[:10]
             sMonthTime = sTime[:7]
             sYearTime = sTime[:4]
@@ -75,27 +71,27 @@ class CProfileUI(QtWidgets.QWidget, profile_ui.Ui_Form):
 
         iGoodsNum = len(self.ProfileInfo)
         self.tableWidgetProfile.setRowCount(iGoodsNum)
-        
-        lstTime = ["总利润",]
+
+        lstTime = ["总利润", ]
         sLastYear = ""
         while oBeginDate.toString("yyyy-MM") <= oEndDate.toString("yyyy-MM"):
             sCurYear = oBeginDate.toString("yyyy")
             if sLastYear != sCurYear:
-                 lstTime.append(sCurYear + "年")
-                 sLastYear = sCurYear
+                lstTime.append(sCurYear + "年")
+                sLastYear = sCurYear
             lstTime.append(oBeginDate.toString("yyyy-MM") + "月")
             oBeginDate = oBeginDate.addMonths(1)
 
-        self.tableWidgetProfile.setColumnCount(len(lstTime) + 1 )
+        self.tableWidgetProfile.setColumnCount(len(lstTime) + 1)
 
-        lstGoods = [ sGoods for sGoods in self.ProfileInfo ]
+        lstGoods = [sGoods for sGoods in self.ProfileInfo]
 
         lstTitle = lstTime[:]
         lstTitle.insert(0, "商品")
         self.tableWidgetProfile.setHorizontalHeaderLabels(lstTitle)
         # if len(lstTitle) < 14:
         #     self.tableWidgetProfile.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
-        
+
         for iRow, sGoods in enumerate(lstGoods):
             item = QtWidgets.QTableWidgetItem(sGoods)
             item.setTextAlignment(QtCore.Qt.AlignCenter)
